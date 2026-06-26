@@ -1,0 +1,127 @@
+"use client";
+
+import type { ReactElement, KeyboardEvent as ReactKeyboardEvent, ChangeEvent } from "react";
+import { useRef, useEffect } from "react";
+import { clsx } from "clsx";
+
+interface FormFieldProps {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  errorMessage?: string;
+  isRequired?: boolean;
+  maxLength?: number;
+  multiline?: boolean;
+  autoFocus?: boolean;
+  onKeyDown?: (e: ReactKeyboardEvent) => void;
+  className?: string;
+}
+
+const LABEL_CLASSES = clsx("text-sm font-medium text-gray-700 mb-1 block");
+
+const BASE_INPUT_CLASSES = clsx(
+  "w-full rounded-lg border px-3 py-2 text-sm",
+  "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+  "transition-all duration-200"
+);
+
+const ERROR_TEXT_CLASSES = clsx("text-xs text-red-500 mt-1");
+const CHAR_COUNT_CLASSES = clsx("text-xs text-gray-400 mt-1 text-right");
+const REQUIRED_INDICATOR_CLASSES = clsx("text-red-500 ml-0.5");
+
+const BORDER_NORMAL = "border-gray-300" as const;
+const BORDER_ERROR = "border-red-400" as const;
+const RESIZE_NONE = "resize-none" as const;
+const REQUIRED_INDICATOR = "*" as const;
+
+const formatCharCount = (current: number, max: number): string =>
+  `${current} / ${max}`;
+
+function FormField({
+  id,
+  label,
+  value,
+  onChange,
+  placeholder,
+  errorMessage,
+  isRequired = false,
+  maxLength,
+  multiline = false,
+  autoFocus = false,
+  onKeyDown,
+  className,
+}: FormFieldProps): ReactElement {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (!autoFocus) return;
+    if (multiline) {
+      textareaRef.current?.focus();
+    } else {
+      inputRef.current?.focus();
+    }
+  }, [autoFocus, multiline]);
+
+  const hasError = !!errorMessage;
+  const borderClass = hasError ? BORDER_ERROR : BORDER_NORMAL;
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ): void => {
+    onChange(e.target.value);
+  };
+
+  return (
+    <div className={clsx("w-full", className)}>
+      <label htmlFor={id} className={clsx(LABEL_CLASSES)}>
+        {label}
+        {isRequired && (
+          <span className={clsx(REQUIRED_INDICATOR_CLASSES)} aria-hidden="true">
+            {REQUIRED_INDICATOR}
+          </span>
+        )}
+      </label>
+
+      {multiline ? (
+        <textarea
+          ref={textareaRef}
+          id={id}
+          value={value}
+          placeholder={placeholder}
+          required={isRequired}
+          maxLength={maxLength}
+          onKeyDown={onKeyDown}
+          onChange={handleChange}
+          className={clsx(BASE_INPUT_CLASSES, borderClass, RESIZE_NONE)}
+        />
+      ) : (
+        <input
+          ref={inputRef}
+          type="text"
+          id={id}
+          value={value}
+          placeholder={placeholder}
+          required={isRequired}
+          maxLength={maxLength}
+          onKeyDown={onKeyDown}
+          onChange={handleChange}
+          className={clsx(BASE_INPUT_CLASSES, borderClass)}
+        />
+      )}
+
+      {hasError && (
+        <p className={clsx(ERROR_TEXT_CLASSES)}>{errorMessage}</p>
+      )}
+      {maxLength !== undefined && (
+        <p className={clsx(CHAR_COUNT_CLASSES)}>
+          {formatCharCount(value.length, maxLength)}
+        </p>
+      )}
+    </div>
+  );
+}
+
+export default FormField;
