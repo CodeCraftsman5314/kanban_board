@@ -28,11 +28,11 @@ const SEPARATOR = "·" as const;
 
 function ConnectionBadge({ status, userCount, className }: ConnectionBadgeProps): ReactElement {
   return (
-    <div className={clsx("inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm dark:bg-gray-950 dark:border-gray-800", className)}>
+    <div className={clsx("inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm shadow-sm dark:bg-slate-950 dark:border-slate-700 dark:shadow-black/20", className)}>
       <span className={clsx("w-2 h-2 rounded-full shrink-0", DOT_COLORS[status])} />
-      <span className="text-gray-700 font-medium dark:text-gray-200">{STATUS_LABELS[status]}</span>
-      <span className="text-gray-300 mx-0.5 dark:text-gray-700">{SEPARATOR}</span>
-      <span className="text-gray-500 dark:text-gray-400">{LABELS.USERS_ONLINE(userCount)}</span>
+      <span className="text-gray-700 font-medium dark:text-slate-100">{STATUS_LABELS[status]}</span>
+      <span className="text-gray-300 mx-0.5 dark:text-slate-600">{SEPARATOR}</span>
+      <span className="text-gray-500 dark:text-slate-400">{LABELS.USERS_ONLINE(userCount)}</span>
     </div>
   );
 }

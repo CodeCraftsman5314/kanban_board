@@ -25,26 +25,42 @@ type DropdownField = "status" | "priority" | null;
 const MODAL_TITLE_CREATE = "Add a new card";
 const MODAL_TITLE_VIEW = "View card";
 const MODAL_TITLE_EDIT = "Edit card";
+const MODAL_WIDTH_CLASS = "max-w-7xl";
+const MODAL_VIEW_CLASS = "max-w-7xl h-5/6";
+const CARD_CODE_PREFIX = "TO";
+const CARD_KIND_LABEL = "Task";
 const TITLE_PLACEHOLDER = "Enter a title";
 const DESCRIPTION_PLACEHOLDER = "Add a more detailed description...";
 const DESCRIPTION_EMPTY_PLACEHOLDER = "No description";
+const VIEW_DESCRIPTION_EMPTY_PLACEHOLDER = "No description provided.";
 const DESCRIPTION_TOOLBAR_NORMAL = "Normal text";
 const DESCRIPTION_COMMANDS_HINT = "Type / for commands";
 const ATTACHMENTS_LABEL = "Attachments";
 const ATTACHMENTS_PLACEHOLDER = "Drag and drop files, paste, or";
 const ATTACHMENTS_BROWSE = "browse";
 const NO_ATTACHMENTS_LABEL = "No attachments";
+const VIEW_NO_ATTACHMENTS_LABEL = "No attachments added yet.";
 const SUBTASKS_LABEL = "Subtasks";
 const SUBTASKS_PLACEHOLDER = "Add subtasks";
 const NO_SUBTASKS_LABEL = "No subtasks";
+const VIEW_NO_SUBTASKS_LABEL = "No subtasks added yet.";
 const SUBTASK_INPUT_PLACEHOLDER = "Add a subtask ticket";
 const ADD_SUBTASK_LABEL = "Add subtask";
+const ADD_ATTACHMENT_LABEL = "Add attachment";
+const ADD_LABEL_LABEL = "Add label";
 const REMOVE_SUBTASK_LABEL = "Remove subtask";
 const CREATE_ANOTHER_LABEL = "Create another card";
 const BTN_EDIT = "Edit";
 const BTN_SAVE_CHANGES = "Save changes";
 const BTN_CLOSE = "Close";
 const BTN_CREATE_CARD = "Create card";
+const ACTIVITY_LABEL = "Activity";
+const ACTIVITY_MESSAGE = "You created this card";
+const ACTIVITY_TIME = "Just now";
+const ASSIGNEE_INITIALS = ["N", "A"] as const;
+const ACTIVITY_INITIAL = "A";
+const SHOW_DETAILS_LABEL = "Show details";
+const DELETE_CARD_LABEL = "Delete card";
 const EMPTY_OPTION_LABEL = "Not available";
 const EMPTY_VALUE = "-";
 const CLOSE_MODAL_LABEL = "Close modal";
@@ -54,8 +70,10 @@ const STATUS_DROPDOWN_LABEL = "Choose status";
 const PRIORITY_DROPDOWN_LABEL = "Choose priority";
 const ENTER_KEY = "Enter";
 const DATE_LOCALE = "en-US";
+const MIN_CARD_ORDER = 0;
 
 const RIGHT_PANEL_LABELS = {
+  DETAILS: "Details",
   STATUS: "Status",
   ASSIGNEE: "Assignee",
   LABELS: "Labels",
@@ -231,6 +249,11 @@ function CardEditorModal({
     setInternalMode("edit");
   };
 
+  const handleEditLabelMode = (): void => {
+    setInternalMode("edit");
+    setIsEditingLabel(true);
+  };
+
   const handleCancelEdit = (): void => {
     resetFromCard();
     setInternalMode("view");
@@ -281,9 +304,282 @@ function CardEditorModal({
     columns.find((column) => column.id === selectedColumnId)?.title ??
     columnTitle ??
     EMPTY_OPTION_LABEL;
+  const viewCardCode = `${CARD_CODE_PREFIX}-${Math.max(card?.order ?? MIN_CARD_ORDER, MIN_CARD_ORDER) + 1}`;
+  const viewLabel = label || CARD_KIND_LABEL;
+
+  if (isViewMode) {
+    return (
+      <Modal isOpen={isOpen} onClose={onClose} className={MODAL_VIEW_CLASS}>
+        <div className="flex h-full flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900">
+          <div className="shrink-0 flex items-start justify-between gap-6 border-b border-gray-100 pb-5 dark:border-gray-800">
+            <div className="relative min-w-0 flex-1 pl-8">
+              <span className="absolute bottom-0 left-0 top-0 w-1 rounded-full bg-blue-500 dark:bg-blue-400" />
+              <div className="flex items-center gap-3">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-blue-500 text-blue-500 dark:border-blue-400 dark:text-blue-300">
+                  <i className="ti ti-circle-dot text-sm" />
+                </span>
+                <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">{viewCardCode}</span>
+                <span className="max-w-28 truncate rounded-md bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-600 dark:bg-blue-500/10 dark:text-blue-300">
+                  {viewLabel}
+                </span>
+              </div>
+              <h2 className="mt-5 line-clamp-2 text-3xl font-semibold leading-tight text-gray-950 dark:text-gray-50">
+                {title || EMPTY_VALUE}
+              </h2>
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-purple-500 text-sm font-semibold text-white">
+                  {ASSIGNEE_INITIALS[0]}
+                </span>
+                <span className="-ml-5 flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-sm font-semibold text-white ring-2 ring-white dark:ring-gray-900">
+                  {ASSIGNEE_INITIALS[1]}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleEditMode}
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-dashed border-gray-300 text-gray-500 hover:border-blue-300 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-gray-700 dark:text-gray-400 dark:hover:border-blue-500 dark:hover:text-blue-300"
+                  aria-label={RIGHT_PANEL_LABELS.ASSIGNEE}
+                >
+                  <i className="ti ti-plus text-base" />
+                </button>
+                <Button variant="secondary" size="sm" onClick={handleEditMode}>
+                  <i className="ti ti-checkbox mr-1" />
+                  {ADD_SUBTASK_LABEL}
+                </Button>
+                <Button variant="secondary" size="sm" isDisabled>
+                  <i className="ti ti-paperclip mr-1" />
+                  {ADD_ATTACHMENT_LABEL}
+                </Button>
+                <Button variant="secondary" size="sm" onClick={handleEditLabelMode}>
+                  <i className="ti ti-tag mr-1" />
+                  {ADD_LABEL_LABEL}
+                </Button>
+              </div>
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
+              <Button variant="secondary" size="sm" onClick={handleEditMode}>
+                <i className="ti ti-pencil mr-1" />
+                {BTN_EDIT}
+              </Button>
+              <button
+                type="button"
+                aria-label={MAXIMIZE_LABEL}
+                disabled
+                className="flex h-9 w-9 cursor-not-allowed items-center justify-center rounded-lg bg-gray-50 text-gray-400 opacity-70 dark:bg-gray-800 dark:text-gray-500"
+              >
+                <i className="ti ti-arrows-maximize text-sm" />
+              </button>
+              <button
+                type="button"
+                aria-label={CLOSE_MODAL_LABEL}
+                onClick={onClose}
+                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              >
+                <i className="ti ti-x text-lg" />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+            <div className="flex min-w-0 flex-1 flex-col divide-y divide-gray-100 overflow-y-auto pr-0 lg:pr-8 dark:divide-gray-800">
+              <section className="py-6">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-gray-100">
+                    <i className="ti ti-notes text-gray-600 dark:text-gray-400" />
+                    {LABELS.DESCRIPTION}
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={handleEditMode}
+                    className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-gray-400 hover:bg-gray-50 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                  >
+                    <i className="ti ti-pencil text-sm" />
+                    {BTN_EDIT}
+                  </button>
+                </div>
+                <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-gray-500 dark:text-gray-400">
+                  {description || VIEW_DESCRIPTION_EMPTY_PLACEHOLDER}
+                </p>
+              </section>
+
+              <section className="py-6">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-gray-100">
+                    <i className="ti ti-checkbox text-gray-600 dark:text-gray-400" />
+                    {SUBTASKS_LABEL}
+                  </h3>
+                  <Button variant="secondary" size="sm" onClick={handleEditMode}>
+                    <i className="ti ti-plus mr-1" />
+                    {ADD_SUBTASK_LABEL}
+                  </Button>
+                </div>
+                {subtasks.length === 0 ? (
+                  <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">{VIEW_NO_SUBTASKS_LABEL}</p>
+                ) : (
+                  <div className="mt-4 flex flex-col gap-2">
+                    {subtasks.map((subtask, index) => (
+                      <div
+                        key={`${subtask}-${index}`}
+                        className="flex items-center gap-3 rounded-lg border border-gray-100 px-3 py-2 dark:border-gray-800"
+                      >
+                        <span className="h-4 w-4 rounded border border-gray-300 dark:border-gray-600" />
+                        <span className="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-200">
+                          {subtask}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+
+              <section className="py-6">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-gray-100">
+                    <i className="ti ti-paperclip text-gray-600 dark:text-gray-400" />
+                    {ATTACHMENTS_LABEL}
+                  </h3>
+                  <Button variant="secondary" size="sm" isDisabled>
+                    <i className="ti ti-plus mr-1" />
+                    {ADD_ATTACHMENT_LABEL}
+                  </Button>
+                </div>
+                <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">{VIEW_NO_ATTACHMENTS_LABEL}</p>
+              </section>
+
+              <section className="py-6">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-gray-100">
+                    <i className="ti ti-activity text-gray-600 dark:text-gray-400" />
+                    {ACTIVITY_LABEL}
+                  </h3>
+                  <Button variant="secondary" size="sm" isDisabled>{SHOW_DETAILS_LABEL}</Button>
+                </div>
+                <div className="mt-4 flex items-center gap-3 rounded-lg bg-gray-50 p-4 dark:bg-gray-950">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-500 text-sm font-semibold text-white">
+                    {ACTIVITY_INITIAL}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{ACTIVITY_MESSAGE}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">{ACTIVITY_TIME}</p>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <aside className="shrink-0 border-t border-gray-100 pt-6 lg:w-80 lg:overflow-y-auto lg:border-l lg:border-t-0 lg:pl-8 dark:border-gray-800">
+              <div className="mb-4 border-b border-gray-100 pb-3 dark:border-gray-800">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{RIGHT_PANEL_LABELS.DETAILS}</h3>
+                <span className="mt-2 block h-0.5 w-14 rounded-full bg-blue-500" />
+              </div>
+              <div className="divide-y divide-gray-100 dark:divide-gray-800">
+                <div className="flex items-center gap-3 py-4">
+                  <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <i className="ti ti-circle-dot text-blue-500" />
+                    {RIGHT_PANEL_LABELS.STATUS}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">{selectedColumnTitle}</span>
+                  <button type="button" onClick={handleEditMode} aria-label={RIGHT_PANEL_LABELS.STATUS} className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300">
+                    <i className="ti ti-pencil text-sm" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-3 py-4">
+                  <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <i className="ti ti-user text-gray-400" />
+                    {RIGHT_PANEL_LABELS.ASSIGNEE}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">{RIGHT_PANEL_LABELS.UNASSIGNED}</span>
+                  <button type="button" onClick={handleEditMode} aria-label={RIGHT_PANEL_LABELS.ASSIGNEE} className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300">
+                    <i className="ti ti-plus text-lg" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-3 py-4">
+                  <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <i className="ti ti-tag text-gray-400" />
+                    {RIGHT_PANEL_LABELS.LABELS}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">{label || RIGHT_PANEL_LABELS.NONE}</span>
+                  <button type="button" onClick={handleEditLabelMode} aria-label={RIGHT_PANEL_LABELS.LABELS} className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300">
+                    <i className="ti ti-plus text-lg" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-3 py-4">
+                  <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <i className={clsx("ti", getPriorityIconClass(priority))} />
+                    {RIGHT_PANEL_LABELS.PRIORITY}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">{selectedPriorityLabel}</span>
+                  <button type="button" onClick={handleEditMode} aria-label={RIGHT_PANEL_LABELS.PRIORITY} className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300">
+                    <i className="ti ti-chevron-down text-sm" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-3 py-4">
+                  <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <i className="ti ti-calendar text-gray-400" />
+                    {RIGHT_PANEL_LABELS.DUE_DATE}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">{formatDisplayDate(dueDate)}</span>
+                  <button type="button" onClick={handleEditMode} aria-label={RIGHT_PANEL_LABELS.DUE_DATE} className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300">
+                    <i className="ti ti-plus text-lg" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-3 py-4">
+                  <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <i className="ti ti-player-play text-gray-400" />
+                    {RIGHT_PANEL_LABELS.START_DATE}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">{RIGHT_PANEL_LABELS.NO_START_DATE}</span>
+                  <button type="button" onClick={handleEditMode} aria-label={RIGHT_PANEL_LABELS.START_DATE} className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300">
+                    <i className="ti ti-plus text-lg" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-3 py-4">
+                  <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <i className="ti ti-credit-card text-gray-400" />
+                    {RIGHT_PANEL_LABELS.PARENT_CARD}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">{RIGHT_PANEL_LABELS.NONE}</span>
+                  <button type="button" onClick={handleEditMode} aria-label={RIGHT_PANEL_LABELS.PARENT_CARD} className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300">
+                    <i className="ti ti-plus text-lg" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-3 py-4">
+                  <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <i className="ti ti-file text-gray-400" />
+                    {RIGHT_PANEL_LABELS.TEMPLATE}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">{RIGHT_PANEL_LABELS.NONE}</span>
+                  <button type="button" onClick={handleEditMode} aria-label={RIGHT_PANEL_LABELS.TEMPLATE} className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300">
+                    <i className="ti ti-plus text-lg" />
+                  </button>
+                </div>
+              </div>
+              <div className="pt-5">
+                <button type="button" disabled className="flex cursor-not-allowed items-center gap-1 text-sm font-medium text-gray-700 opacity-70 dark:text-gray-300">
+                  {RIGHT_PANEL_LABELS.MORE_OPTIONS}
+                  <i className="ti ti-chevron-down text-xs" />
+                </button>
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-500">{RIGHT_PANEL_LABELS.MORE_OPTIONS_SUB}</p>
+              </div>
+            </aside>
+          </div>
+
+          <div className="shrink-0 flex items-center justify-between border-t border-gray-100 pt-6 dark:border-gray-800">
+            <button
+              type="button"
+              disabled
+              className="flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-500 opacity-70 dark:bg-red-500/10 dark:text-red-300"
+            >
+              <i className="ti ti-trash text-sm" />
+              {DELETE_CARD_LABEL}
+            </button>
+            <Button variant="secondary" onClick={onClose}>{BTN_CLOSE}</Button>
+          </div>
+        </div>
+      </Modal>
+    );
+  }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-5xl">
+    <Modal isOpen={isOpen} onClose={onClose} className={MODAL_WIDTH_CLASS}>
       <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-4 dark:border-gray-800">
         <span className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{modalTitle}</span>
         <div className="flex items-center gap-2">

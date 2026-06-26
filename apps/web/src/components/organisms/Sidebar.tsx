@@ -46,13 +46,13 @@ function Sidebar(): ReactElement {
       onClick={handleToggle}
       onKeyDown={handleKeyDown}
       className={clsx(
-        "h-screen bg-gray-50 border-r border-gray-200 flex flex-col items-center py-5 shrink-0 overflow-hidden transition-all duration-200 ease-in-out cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-inset dark:bg-gray-950 dark:border-gray-800 dark:focus:ring-blue-900",
+        "h-screen bg-gray-50 border-r border-gray-200 flex flex-col items-center py-5 shrink-0 overflow-hidden transition-all duration-200 ease-in-out cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-inset dark:bg-slate-900 dark:border-slate-800 dark:focus:ring-blue-900",
         isExpanded ? "w-64" : "w-20"
       )}
     >
       {/* Logo */}
       <div className="flex items-center gap-4 px-4 mb-6 w-full shrink-0">
-        <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shrink-0">
+        <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-950/30">
           <i className="ti ti-layout-kanban text-white text-2xl" />
         </div>
         <span
@@ -73,8 +73,8 @@ function Sidebar(): ReactElement {
             className={clsx(
               "w-full min-h-16 flex items-center gap-4 px-3 rounded-lg transition-colors duration-150 cursor-pointer",
               item.isActive
-                ? "bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-900"
+                ? "bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 dark:shadow-sm dark:shadow-blue-950/30"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800"
             )}
           >
             <i className={clsx("ti text-2xl shrink-0", item.iconClass)} />
@@ -96,8 +96,8 @@ function Sidebar(): ReactElement {
           className={clsx(
             "w-full min-h-16 flex items-center gap-4 px-3 rounded-lg transition-colors duration-150 cursor-pointer",
             SETTINGS_ITEM.isActive
-              ? "bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300"
-              : "text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-900"
+              ? "bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300 dark:shadow-sm dark:shadow-blue-950/30"
+              : "text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800"
           )}
         >
           <i className={clsx("ti text-2xl shrink-0", SETTINGS_ITEM.iconClass)} />

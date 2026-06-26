@@ -10,7 +10,7 @@ interface ThemeToggleProps {
   className?: string;
 }
 
-const BUTTON_CLASSES = "w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-800 transition-colors duration-150 cursor-pointer";
+const BUTTON_CLASSES = "w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition-colors duration-150 cursor-pointer";
 const THEME_STORAGE_KEY = "kanban-theme";
 
 const applyTheme = (theme: ThemeMode): void => {

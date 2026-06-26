@@ -61,18 +61,18 @@ function KanbanColumn({
   return (
     <div
       className={clsx(
-        "flex max-h-full w-96 shrink-0 flex-col rounded-xl border border-gray-200 border-t-2 bg-gray-50 shadow-sm shadow-gray-200/70 dark:border-gray-800 dark:bg-gray-900 dark:shadow-black/30",
+        "flex max-h-full w-96 shrink-0 flex-col rounded-xl border border-gray-200 border-t-2 bg-gray-50 shadow-sm shadow-gray-200/70 dark:border-slate-700 dark:bg-slate-800 dark:shadow-xl dark:shadow-black/20",
         COLUMN_ACCENT_COLORS[accentIndex]
       )}
     >
       <div className="flex items-center justify-between px-4 py-4">
         <div className="flex items-center gap-2">
           <span className={clsx("w-2.5 h-2.5 rounded-full shrink-0", COLUMN_DOT_COLORS[accentIndex])} />
-          <span className="text-base font-semibold text-gray-800 dark:text-gray-100">{column.title}</span>
-          <span className="text-sm text-gray-500 font-normal dark:text-gray-400">{cards.length}</span>
+          <span className="text-base font-semibold text-gray-800 dark:text-slate-100">{column.title}</span>
+          <span className="text-sm text-gray-500 font-normal dark:text-slate-400">{cards.length}</span>
         </div>
         <div className="flex items-center gap-1">
-          <i className="ti ti-dots text-gray-400 hover:text-gray-600 cursor-pointer dark:text-gray-500 dark:hover:text-gray-200" />
+          <i className="ti ti-dots text-gray-400 hover:text-gray-600 cursor-pointer dark:text-slate-500 dark:hover:text-slate-200" />
         </div>
       </div>
       <div
@@ -81,7 +81,7 @@ function KanbanColumn({
         onDrop={handleDrop}
       >
         {cards.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center p-4 text-sm text-gray-400 text-center dark:text-gray-500">
+          <div className="flex-1 flex items-center justify-center p-4 text-sm text-gray-400 text-center dark:text-slate-500">
             {LABELS.EMPTY_COLUMN}
           </div>
         ) : (
@@ -98,7 +98,7 @@ function KanbanColumn({
       <button
         type="button"
         onClick={handleAddCard}
-        className="w-full cursor-pointer border-t border-gray-200 px-4 py-3 text-left text-sm text-gray-500 transition-colors duration-150 hover:bg-white hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+        className="w-full cursor-pointer border-t border-gray-200 px-4 py-3 text-left text-sm text-gray-500 transition-colors duration-150 hover:bg-white hover:text-gray-700 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100"
       >
         {LABELS.ADD_CARD}
       </button>
