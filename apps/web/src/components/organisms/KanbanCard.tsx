@@ -32,36 +32,40 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
     }
   };
 
-  const hasBadges =
-    card.priority !== "none" || card.label !== "" || card.due_date !== null;
+  const hasLabel = card.label !== "";
+  const hasPriority = card.priority !== "none";
+  const hasDueDate = card.due_date !== null;
+  const hasBadges = hasLabel || hasPriority || hasDueDate;
 
   return (
     <div
       draggable
       onDragStart={handleDragStart}
       onClick={handleClick}
-      className="group relative bg-white rounded-lg border border-gray-200 px-3 py-3 cursor-pointer transition-all duration-200 hover:border-blue-200 hover:shadow-sm"
+      className="group relative bg-white rounded-lg border border-gray-200 p-3 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all duration-150 select-none"
     >
-      <p className="text-sm font-medium text-gray-900 leading-snug mb-1">{card.title}</p>
+      <p className="text-sm font-medium text-gray-900 leading-snug">{card.title}</p>
       {card.description && (
-        <p className={clsx("text-xs text-gray-500 mb-2", LINE_CLAMP_CLASS)}>
+        <p className={clsx("text-xs text-gray-500 mt-1", LINE_CLAMP_CLASS)}>
           {card.description}
         </p>
       )}
       {hasBadges && (
-        <div className="flex items-center gap-1.5 flex-wrap mt-2">
-          {card.priority !== "none" && <PriorityBadge priority={card.priority} />}
-          {card.label !== "" && <LabelBadge label={card.label} />}
-          {card.due_date !== null && <DueDateBadge dueDate={card.due_date} />}
+        <div className="mt-3 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {hasLabel && <LabelBadge label={card.label} />}
+            {hasPriority && <PriorityBadge priority={card.priority} />}
+          </div>
+          {hasDueDate && <DueDateBadge dueDate={card.due_date} />}
         </div>
       )}
       <button
         type="button"
         onClick={handleDelete}
         aria-label={LABELS.DELETE}
-        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 w-6 h-6 flex items-center justify-center rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition-opacity duration-150 cursor-pointer"
+        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all duration-150 cursor-pointer"
       >
-        <i className="ti ti-trash text-xs" />
+        <i className="ti ti-trash" style={{ fontSize: "11px" }} />
       </button>
     </div>
   );

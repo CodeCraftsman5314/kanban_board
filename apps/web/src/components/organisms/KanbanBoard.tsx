@@ -2,11 +2,12 @@
 
 import type { ReactElement } from "react";
 import { useState } from "react";
+import { clsx } from "clsx";
 
 import type { Card, CardDraft } from "@/types";
 import { LABELS } from "@/constants";
 import { useBoard } from "@/hooks";
-import { Spinner } from "@/components/atoms";
+import { Button, Spinner } from "@/components/atoms";
 import { ConnectionBadge } from "@/components/molecules";
 import CardEditorModal from "@/components/organisms/CardEditorModal";
 import KanbanColumn from "@/components/organisms/KanbanColumn";
@@ -18,8 +19,14 @@ interface ActiveEditor {
   card: Card | null;
 }
 
-const BOARD_TITLE = "Team Kanban";
-const BOARD_SUBTITLE = "Realtime planning board";
+const BOARD_TITLE = "Team Board";
+const SEARCH_PLACEHOLDER = "Filter cards...";
+const NAV_TABS = ["Board", "Timeline", "Calendar", "List", "Files", "Dashboard"] as const;
+const ACTIVE_TAB = "Board" as const;
+const GROUP_LABEL = "Group: Status";
+const SORT_LABEL = "Sort: Priority";
+const ADD_CARD_LABEL = "+ Add card";
+const AVATAR_OVERFLOW = "+2";
 
 function KanbanBoard(): ReactElement {
   const {
@@ -55,12 +62,12 @@ function KanbanBoard(): ReactElement {
     );
   }
 
-  const handleCardClick = (card: Card): void => {
-    setActiveEditor({ columnId: card.column_id, card });
-  };
-
   const handleAddCard = (columnId: string): void => {
     setActiveEditor({ columnId, card: null });
+  };
+
+  const handleCardClick = (card: Card): void => {
+    setActiveEditor({ columnId: card.column_id, card });
   };
 
   const handleCloseEditor = (): void => {
@@ -83,22 +90,80 @@ function KanbanBoard(): ReactElement {
     void moveCardToColumn(cardId, targetColumnId);
   };
 
+  const handleGlobalAddCard = (): void => {
+    const firstColumn = columns[0];
+    if (firstColumn) {
+      handleAddCard(firstColumn.id);
+    }
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-gray-100">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100 shrink-0">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">{BOARD_TITLE}</h1>
-            <p className="text-sm text-gray-500">{BOARD_SUBTITLE}</p>
+
+        {/* Row 1: Title + avatars + live status */}
+        <div className="flex items-center justify-between px-4 h-14 bg-white border-b border-gray-100 shrink-0">
+          <div className="flex items-center gap-1">
+            <span className="text-base font-semibold text-gray-900">{BOARD_TITLE}</span>
+            <i className="ti ti-chevron-down text-gray-400 text-sm ml-1" />
+            <i className="ti ti-star text-gray-400 text-sm ml-2" />
           </div>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
+          <div className="flex items-center">
+            <div className="flex items-center">
+              <div className="w-7 h-7 rounded-full bg-gray-300 border-2 border-white" />
+              <div className="w-7 h-7 rounded-full bg-gray-400 border-2 border-white -ml-2" />
+              <div className="w-7 h-7 rounded-full bg-gray-500 border-2 border-white -ml-2" />
+              <span className="ml-1.5 text-xs text-gray-500 font-medium">{AVATAR_OVERFLOW}</span>
+            </div>
+            <span className="w-px h-5 bg-gray-200 mx-3" />
             <ConnectionBadge status={connectionStatus} userCount={1} />
+            <span className="ml-2">
+              <ThemeToggle />
+            </span>
           </div>
-        </header>
-        <div className="flex-1 overflow-x-auto overflow-y-hidden px-6 py-6">
-          <div className="flex gap-4 h-full items-start">
+        </div>
+
+        {/* Nav tabs row */}
+        <div className="flex items-center px-4 bg-white border-b border-gray-200 shrink-0">
+          {NAV_TABS.map((tab) => (
+            <div
+              key={tab}
+              className={clsx(
+                "px-3 py-2 text-sm cursor-pointer transition-colors",
+                tab === ACTIVE_TAB
+                  ? "text-blue-600 border-b-2 border-blue-600 font-medium"
+                  : "text-gray-500 hover:text-gray-700"
+              )}
+            >
+              {tab}
+            </div>
+          ))}
+        </div>
+
+        {/* Row 2: Search + Group/Sort + Add card */}
+        <div className="flex items-center justify-between px-4 h-10 bg-white border-b border-gray-200 shrink-0">
+          <div className="flex items-center gap-2 text-sm text-gray-400">
+            <i className="ti ti-search text-gray-400" />
+            <span>{SEARCH_PLACEHOLDER}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button type="button" className="text-sm text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-100 transition-colors cursor-pointer">
+              {GROUP_LABEL}
+            </button>
+            <button type="button" className="text-sm text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-100 transition-colors cursor-pointer">
+              {SORT_LABEL}
+            </button>
+            <span className="w-px h-4 bg-gray-200" />
+            <Button size="sm" onClick={handleGlobalAddCard}>
+              {ADD_CARD_LABEL}
+            </Button>
+          </div>
+        </div>
+
+        {/* Board columns */}
+        <div className="flex-1 overflow-x-auto overflow-y-hidden bg-gray-100">
+          <div className="flex gap-4 px-4 py-4 h-full items-start min-w-max">
             {columns.map((column, index) => (
               <KanbanColumn
                 key={column.id}
@@ -114,6 +179,7 @@ function KanbanBoard(): ReactElement {
           </div>
         </div>
       </div>
+
       <CardEditorModal
         isOpen={!!activeEditor}
         card={activeEditor?.card ?? null}

@@ -10,7 +10,7 @@ interface ThemeToggleProps {
   className?: string;
 }
 
-const BUTTON_CLASSES = "w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 cursor-pointer border border-gray-200";
+const BUTTON_CLASSES = "w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors duration-150 cursor-pointer";
 
 function ThemeToggle({ className }: ThemeToggleProps): ReactElement {
   const [theme, setTheme] = useState<ThemeMode>("light");
@@ -32,7 +32,7 @@ function ThemeToggle({ className }: ThemeToggleProps): ReactElement {
       aria-label="Toggle theme"
       className={clsx(BUTTON_CLASSES, className)}
     >
-      <i className={clsx("ti", theme === "dark" ? "ti-sun" : "ti-moon")} />
+      <i className={clsx("ti text-sm", theme === "dark" ? "ti-sun" : "ti-moon")} />
     </button>
   );
 }

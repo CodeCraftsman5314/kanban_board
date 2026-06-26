@@ -5,7 +5,6 @@ import { clsx } from "clsx";
 
 import type { Card, Column } from "@/types";
 import { LABELS } from "@/constants";
-import { Badge } from "@/components/atoms";
 import KanbanCard from "@/components/organisms/KanbanCard";
 
 interface KanbanColumnProps {
@@ -19,10 +18,17 @@ interface KanbanColumnProps {
 }
 
 const COLUMN_ACCENT_COLORS = [
-  "border-l-blue-500",
-  "border-l-amber-500",
-  "border-l-green-500",
-  "border-l-purple-500",
+  "border-t-blue-500",
+  "border-t-amber-500",
+  "border-t-green-500",
+  "border-t-purple-500",
+] as const;
+
+const COLUMN_DOT_COLORS = [
+  "bg-blue-500",
+  "bg-amber-500",
+  "bg-green-500",
+  "bg-purple-500",
 ] as const;
 
 function KanbanColumn({
@@ -34,6 +40,8 @@ function KanbanColumn({
   onCardDelete,
   onCardDrop,
 }: KanbanColumnProps): ReactElement {
+  const accentIndex = index % COLUMN_ACCENT_COLORS.length;
+
   const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
     event.preventDefault();
   };
@@ -53,21 +61,31 @@ function KanbanColumn({
   return (
     <div
       className={clsx(
-        "flex flex-col w-72 shrink-0 bg-white rounded-xl border border-gray-200 border-l-4 max-h-full",
-        COLUMN_ACCENT_COLORS[index % COLUMN_ACCENT_COLORS.length]
+        "flex flex-col w-72 shrink-0 bg-white rounded-xl border border-gray-200 border-t-2 max-h-full",
+        COLUMN_ACCENT_COLORS[accentIndex]
       )}
     >
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <span className="text-sm font-semibold text-gray-800">{column.title}</span>
-        <Badge count={cards.length} />
+      <div className="flex items-center justify-between px-3 py-3">
+        <div className="flex items-center gap-2">
+          <span className={clsx("w-2 h-2 rounded-full shrink-0", COLUMN_DOT_COLORS[accentIndex])} />
+          <span className="text-sm font-semibold text-gray-800">{column.title}</span>
+          <span className="text-sm text-gray-400 font-normal">{cards.length}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <i className="ti ti-dots text-gray-400 hover:text-gray-600 cursor-pointer" />
+          <i
+            className="ti ti-plus text-gray-400 hover:text-gray-600 cursor-pointer"
+            onClick={handleAddCard}
+          />
+        </div>
       </div>
       <div
-        className="flex-1 overflow-y-auto px-3 py-3 flex flex-col gap-2"
+        className="flex-1 overflow-y-auto px-2 py-2 flex flex-col gap-2"
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
         {cards.length === 0 ? (
-          <div className="flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg m-2 p-6 text-sm text-gray-400 text-center min-h-24">
+          <div className="flex-1 flex items-center justify-center p-4 text-sm text-gray-400 text-center">
             {LABELS.EMPTY_COLUMN}
           </div>
         ) : (
@@ -84,9 +102,9 @@ function KanbanColumn({
       <button
         type="button"
         onClick={handleAddCard}
-        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-t border-gray-100 transition-colors duration-200 cursor-pointer"
+        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-t border-gray-100 transition-colors duration-150 cursor-pointer"
       >
-        <i className="ti ti-plus text-gray-400" />
+        <i className="ti ti-plus text-gray-400 text-xs" />
         {LABELS.ADD_CARD}
       </button>
     </div>
