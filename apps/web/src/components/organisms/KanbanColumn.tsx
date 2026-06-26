@@ -61,7 +61,7 @@ function KanbanColumn({
   return (
     <div
       className={clsx(
-        "flex flex-col w-96 shrink-0 bg-white rounded-xl border border-gray-200 border-t-2 max-h-full dark:bg-gray-900 dark:border-gray-800",
+        "flex max-h-full w-96 shrink-0 flex-col rounded-xl border border-gray-200 border-t-2 bg-gray-50 shadow-sm shadow-gray-200/70 dark:border-gray-800 dark:bg-gray-900 dark:shadow-black/30",
         COLUMN_ACCENT_COLORS[accentIndex]
       )}
     >
@@ -76,7 +76,7 @@ function KanbanColumn({
         </div>
       </div>
       <div
-        className="flex-1 overflow-y-auto px-3 py-3 flex flex-col gap-3"
+        className="flex flex-1 flex-col gap-4 overflow-y-auto px-3 py-3"
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
@@ -98,7 +98,7 @@ function KanbanColumn({
       <button
         type="button"
         onClick={handleAddCard}
-        className="w-full px-4 py-3 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-t border-gray-100 transition-colors duration-150 cursor-pointer text-left dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-800 dark:border-gray-800"
+        className="w-full cursor-pointer border-t border-gray-200 px-4 py-3 text-left text-sm text-gray-500 transition-colors duration-150 hover:bg-white hover:text-gray-700 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
       >
         {LABELS.ADD_CARD}
       </button>
