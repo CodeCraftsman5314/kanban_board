@@ -8,6 +8,8 @@ export type DragState = { cardId: string; sourceColumnId: string } | null;
 
 export type ThemeMode = "light" | "dark";
 
+export type ModalMode = "create" | "view" | "edit";
+
 export type CardDraft = {
   title: string;
   description: string;

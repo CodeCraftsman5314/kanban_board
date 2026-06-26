@@ -4,7 +4,7 @@ import type { ReactElement } from "react";
 import { useState } from "react";
 import { clsx } from "clsx";
 
-import type { Card, CardDraft } from "@/types";
+import type { Card, CardDraft, ModalMode } from "@/types";
 import { LABELS } from "@/constants";
 import { useBoard } from "@/hooks";
 import { Spinner } from "@/components/atoms";
@@ -16,7 +16,9 @@ import ThemeToggle from "@/components/organisms/ThemeToggle";
 
 interface ActiveEditor {
   columnId: string;
+  columnTitle: string;
   card: Card | null;
+  mode: ModalMode;
 }
 
 const BOARD_TITLE = "Team Board";
@@ -62,11 +64,13 @@ function KanbanBoard(): ReactElement {
   }
 
   const handleAddCard = (columnId: string): void => {
-    setActiveEditor({ columnId, card: null });
+    const columnTitle = columns.find((column) => column.id === columnId)?.title ?? "";
+    setActiveEditor({ columnId, columnTitle, card: null, mode: "create" });
   };
 
   const handleCardClick = (card: Card): void => {
-    setActiveEditor({ columnId: card.column_id, card });
+    const columnTitle = columns.find((column) => column.id === card.column_id)?.title ?? "";
+    setActiveEditor({ columnId: card.column_id, columnTitle, card, mode: "view" });
   };
 
   const handleCloseEditor = (): void => {
@@ -176,9 +180,10 @@ function KanbanBoard(): ReactElement {
 
       <CardEditorModal
         isOpen={!!activeEditor}
+        mode={activeEditor?.mode ?? "create"}
         columns={columns}
         columnId={activeEditor?.columnId ?? ""}
-        columnTitle={columns.find((col) => col.id === activeEditor?.columnId)?.title ?? ""}
+        columnTitle={activeEditor?.columnTitle ?? ""}
         card={activeEditor?.card ?? null}
         onClose={handleCloseEditor}
         onSave={handleSaveCard}
