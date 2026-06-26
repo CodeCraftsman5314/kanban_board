@@ -6,6 +6,7 @@ export const COLUMN_HEADER_HEIGHT = 56;
 
 export const LABELS = {
   ADD_CARD: "+ Add Card",
+  ADD_NEW_CARD: "Add new card",
   CARD_TITLE_PLACEHOLDER: "Card title...",
   CARD_DESCRIPTION_PLACEHOLDER: "Add a description...",
   EMPTY_COLUMN: "No cards yet. Add one above.",
@@ -18,6 +19,28 @@ export const LABELS = {
   RECONNECTING: "Reconnecting...",
   USERS_ONLINE: (n: number): string =>
     n === 1 ? "1 user online" : `${n} users online`,
+  DUE_DATE_PLACEHOLDER: "No due date",
+  TITLE_REQUIRED: "Title is required",
+  LABEL_PLACEHOLDER: "e.g. Design, Dev, QA",
+  PRIORITY: "Priority",
+  LABEL: "Label",
+  DUE_DATE: "Due date",
+  TITLE: "Title",
+  DESCRIPTION: "Description",
+} as const;
+
+export const PRIORITY_LABELS = {
+  none: "No priority",
+  low: "Low",
+  medium: "Medium",
+  high: "High",
+} as const;
+
+export const PRIORITY_COLORS = {
+  none: "text-gray-400",
+  low: "text-blue-500",
+  medium: "text-yellow-500",
+  high: "text-red-500",
 } as const;
 
 export const REALTIME_CHANNEL_BOARD = "board-channel";

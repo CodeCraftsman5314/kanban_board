@@ -4,6 +4,8 @@ export type Nullable<T> = T | null;
 
 export type Optional<T> = T | undefined;
 
+export type Priority = "none" | "low" | "medium" | "high";
+
 export interface Column {
   id: ID;
   title: string;
@@ -17,6 +19,9 @@ export interface Card {
   description: string;
   order: number;
   created_at: string;
+  label: string;
+  priority: Priority;
+  due_date: string | null;
 }
 
 export interface RealtimePayload<T extends Record<string, unknown>> {
@@ -39,7 +44,13 @@ export interface Database {
       };
       cards: {
         Row: Card;
-        Insert: Omit<Card, "id" | "created_at"> & { id?: ID; created_at?: string };
+        Insert: Omit<Card, "id" | "created_at" | "label" | "priority" | "due_date"> & {
+          id?: ID;
+          created_at?: string;
+          label?: string;
+          priority?: Priority;
+          due_date?: string | null;
+        };
         Update: Partial<Card>;
       };
     };

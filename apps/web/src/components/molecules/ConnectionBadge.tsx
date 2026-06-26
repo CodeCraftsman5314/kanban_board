@@ -14,7 +14,7 @@ interface ConnectionBadgeProps {
 }
 
 const CONTAINER_CLASSES = clsx(
-  "inline-flex items-center gap-2 px-3 py-1.5",
+  "inline-flex items-center gap-2 px-3 py-1",
   "bg-white border border-gray-200 rounded-full shadow-sm text-sm"
 );
 
@@ -25,17 +25,16 @@ const STATUS_TEXT_CLASSES = {
 } as const;
 
 const DIVIDER_CLASSES = clsx("text-gray-300 mx-1");
-const USER_COUNT_CLASSES = clsx("text-gray-500");
+const USER_COUNT_CLASSES = clsx("text-gray-500 text-xs");
 
 const DISCONNECTED_LABEL = "Disconnected" as const;
+const DIVIDER = "·" as const;
 
 const STATUS_LABELS = {
   connected: LABELS.CONNECTED,
   reconnecting: LABELS.RECONNECTING,
   disconnected: DISCONNECTED_LABEL,
 } as const;
-
-const DIVIDER = "·" as const;
 
 function ConnectionBadge({
   status,

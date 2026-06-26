@@ -33,8 +33,8 @@ const TITLE_CLASSES = clsx("text-lg font-semibold text-gray-900");
 const BODY_CLASSES = clsx("p-6");
 
 const ESCAPE_KEY = "Escape" as const;
-const CLOSE_ICON = "✕" as const;
 const CLOSE_ARIA_LABEL = "Close modal" as const;
+const CLOSE_ICON_CLASS = "ti ti-x" as const;
 
 function Modal({
   isOpen,
@@ -77,7 +77,7 @@ function Modal({
         <div className={clsx(HEADER_CLASSES)}>
           <h2 className={clsx(TITLE_CLASSES)}>{title}</h2>
           <Button variant="ghost" size="sm" onClick={onClose} ariaLabel={CLOSE_ARIA_LABEL}>
-            {CLOSE_ICON}
+            <i className={clsx(CLOSE_ICON_CLASS)} />
           </Button>
         </div>
         <div className={clsx(BODY_CLASSES)}>{children}</div>

@@ -24,7 +24,7 @@ const LABEL_CLASSES = clsx("text-sm font-medium text-gray-700 mb-1 block");
 const BASE_INPUT_CLASSES = clsx(
   "w-full rounded-lg border px-3 py-2 text-sm",
   "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
-  "transition-all duration-200"
+  "transition-all duration-200 resize-none"
 );
 
 const ERROR_TEXT_CLASSES = clsx("text-xs text-red-500 mt-1");
@@ -33,7 +33,6 @@ const REQUIRED_INDICATOR_CLASSES = clsx("text-red-500 ml-0.5");
 
 const BORDER_NORMAL = "border-gray-300" as const;
 const BORDER_ERROR = "border-red-400" as const;
-const RESIZE_NONE = "resize-none" as const;
 const REQUIRED_INDICATOR = "*" as const;
 
 const formatCharCount = (current: number, max: number): string =>
@@ -95,7 +94,7 @@ function FormField({
           maxLength={maxLength}
           onKeyDown={onKeyDown}
           onChange={handleChange}
-          className={clsx(BASE_INPUT_CLASSES, borderClass, RESIZE_NONE)}
+          className={clsx(BASE_INPUT_CLASSES, borderClass)}
         />
       ) : (
         <input
