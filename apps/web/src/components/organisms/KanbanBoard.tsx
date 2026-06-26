@@ -74,12 +74,13 @@ function KanbanBoard(): ReactElement {
     setActiveEditor(null);
   };
 
-  const handleSaveCard = async (draft: CardDraft): Promise<boolean> => {
-    if (!activeEditor) return false;
+  const handleSaveCard = (draft: CardDraft): void => {
+    if (!activeEditor) return;
     if (activeEditor.card) {
-      return editCard(activeEditor.card.id, draft);
+      void editCard(activeEditor.card.id, draft);
+    } else {
+      void addCard(activeEditor.columnId, draft);
     }
-    return addCard(activeEditor.columnId, draft);
   };
 
   const handleCardDelete = (cardId: string): void => {
@@ -182,6 +183,8 @@ function KanbanBoard(): ReactElement {
 
       <CardEditorModal
         isOpen={!!activeEditor}
+        columnId={activeEditor?.columnId ?? ""}
+        columnTitle={columns.find((col) => col.id === activeEditor?.columnId)?.title ?? ""}
         card={activeEditor?.card ?? null}
         onClose={handleCloseEditor}
         onSave={handleSaveCard}
