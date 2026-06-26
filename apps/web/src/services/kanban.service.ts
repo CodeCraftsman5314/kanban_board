@@ -14,6 +14,7 @@ export interface CreateCardParams extends Record<string, unknown> {
   label: string;
   priority: Priority;
   due_date: string | null;
+  subtasks: string[];
   order: number;
 }
 
@@ -23,6 +24,7 @@ export interface UpdateCardParams extends Record<string, unknown> {
   label?: string;
   priority?: Priority;
   due_date?: string | null;
+  subtasks?: string[];
   order?: number;
   column_id?: string;
 }

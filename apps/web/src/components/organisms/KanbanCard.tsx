@@ -33,7 +33,9 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
   const hasLabel = card.label !== "";
   const hasPriority = card.priority !== "none";
   const hasDueDate = card.due_date !== null;
-  const hasBadges = hasLabel || hasPriority || hasDueDate;
+  const subtaskCount = card.subtasks?.length ?? 0;
+  const hasSubtasks = subtaskCount > 0;
+  const hasBadges = hasLabel || hasPriority || hasDueDate || hasSubtasks;
 
   return (
     <div
@@ -53,6 +55,12 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
           <div className="flex items-center gap-2 flex-wrap">
             {hasLabel && <LabelBadge label={card.label} />}
             {hasPriority && <PriorityBadge priority={card.priority} />}
+            {hasSubtasks && (
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+                <i className="ti ti-list-check" />
+                {subtaskCount}
+              </span>
+            )}
           </div>
           {hasDueDate && <DueDateBadge dueDate={card.due_date} />}
         </div>

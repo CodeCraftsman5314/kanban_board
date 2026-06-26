@@ -14,6 +14,7 @@ export type CardDraft = {
   label: string;
   priority: Card["priority"];
   due_date: string | null;
+  subtasks: string[];
   column_id?: string;
 };
 

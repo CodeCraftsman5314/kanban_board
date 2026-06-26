@@ -1,6 +1,6 @@
 "use client";
 
-import type { ChangeEvent, ReactElement } from "react";
+import type { ChangeEvent, KeyboardEvent, ReactElement } from "react";
 import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 
@@ -19,6 +19,8 @@ interface CardEditorModalProps {
   onSave: (draft: CardDraft) => void;
 }
 
+type DropdownField = "status" | "priority" | null;
+
 const MODAL_TITLE_CREATE = "Add a new card";
 const MODAL_TITLE_EDIT = "Edit card";
 const TITLE_PLACEHOLDER = "Enter a title";
@@ -30,12 +32,18 @@ const ATTACHMENTS_PLACEHOLDER = "Drag and drop files, paste, or";
 const ATTACHMENTS_BROWSE = "browse";
 const SUBTASKS_LABEL = "Subtasks";
 const SUBTASKS_PLACEHOLDER = "Add subtasks";
+const SUBTASK_INPUT_PLACEHOLDER = "Add a subtask ticket";
+const ADD_SUBTASK_LABEL = "Add subtask";
+const REMOVE_SUBTASK_LABEL = "Remove subtask";
 const CREATE_ANOTHER_LABEL = "Create another card";
 const SAVE_BUTTON_LABEL = "Create card";
 const EMPTY_OPTION_LABEL = "Not available";
 const CLOSE_MODAL_LABEL = "Close modal";
 const MINIMIZE_LABEL = "Minimize";
 const MAXIMIZE_LABEL = "Maximize";
+const STATUS_DROPDOWN_LABEL = "Choose status";
+const PRIORITY_DROPDOWN_LABEL = "Choose priority";
+const ENTER_KEY = "Enter";
 
 const RIGHT_PANEL_LABELS = {
   STATUS: "Status",
@@ -61,9 +69,6 @@ const PRIORITY_OPTIONS: ReadonlyArray<{ value: Priority; label: string }> = [
   { value: "high", label: PRIORITY_LABELS.high },
 ];
 
-const isPriority = (value: string): value is Priority =>
-  PRIORITY_OPTIONS.some((opt) => opt.value === value);
-
 function CardEditorModal({
   isOpen,
   columns,
@@ -78,10 +83,13 @@ function CardEditorModal({
   const [label, setLabel] = useState("");
   const [priority, setPriority] = useState<Priority>("none");
   const [dueDate, setDueDate] = useState<string | null>(null);
+  const [subtasks, setSubtasks] = useState<string[]>([]);
+  const [subtaskDraft, setSubtaskDraft] = useState("");
   const [selectedColumnId, setSelectedColumnId] = useState(columnId);
   const [titleError, setTitleError] = useState("");
   const [createAnother, setCreateAnother] = useState(false);
   const [isEditingLabel, setIsEditingLabel] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<DropdownField>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -91,6 +99,8 @@ function CardEditorModal({
       setLabel(card.label);
       setPriority(card.priority);
       setDueDate(card.due_date);
+      setSubtasks(card.subtasks ?? []);
+      setSubtaskDraft("");
       setSelectedColumnId(card.column_id);
     } else {
       setTitle("");
@@ -98,10 +108,13 @@ function CardEditorModal({
       setLabel("");
       setPriority("none");
       setDueDate(null);
+      setSubtasks([]);
+      setSubtaskDraft("");
       setSelectedColumnId(columnId);
     }
     setTitleError("");
     setIsEditingLabel(false);
+    setOpenDropdown(null);
   }, [card, columnId, isOpen]);
 
   const handleTitleChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -125,17 +138,49 @@ function CardEditorModal({
     setIsEditingLabel(false);
   };
 
-  const handlePriorityChange = (event: ChangeEvent<HTMLSelectElement>): void => {
-    if (!isPriority(event.target.value)) return;
-    setPriority(event.target.value);
-  };
-
   const handleDueDateChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setDueDate(event.target.value || null);
   };
 
-  const handleStatusChange = (event: ChangeEvent<HTMLSelectElement>): void => {
-    setSelectedColumnId(event.target.value);
+  const handleSubtaskDraftChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setSubtaskDraft(event.target.value);
+  };
+
+  const handleAddSubtask = (): void => {
+    const nextSubtask = subtaskDraft.trim();
+    if (!nextSubtask) return;
+    setSubtasks((currentSubtasks) => [...currentSubtasks, nextSubtask]);
+    setSubtaskDraft("");
+  };
+
+  const handleSubtaskKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
+    if (event.key !== ENTER_KEY) return;
+    event.preventDefault();
+    handleAddSubtask();
+  };
+
+  const handleRemoveSubtask = (indexToRemove: number): void => {
+    setSubtasks((currentSubtasks) =>
+      currentSubtasks.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
+  const handleStatusToggle = (): void => {
+    setOpenDropdown((current) => (current === "status" ? null : "status"));
+  };
+
+  const handlePriorityToggle = (): void => {
+    setOpenDropdown((current) => (current === "priority" ? null : "priority"));
+  };
+
+  const handleStatusSelect = (selectedId: string): void => {
+    setSelectedColumnId(selectedId);
+    setOpenDropdown(null);
+  };
+
+  const handlePrioritySelect = (selectedPriority: Priority): void => {
+    setPriority(selectedPriority);
+    setOpenDropdown(null);
   };
 
   const handleCreateAnotherChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -154,6 +199,7 @@ function CardEditorModal({
       label: label.trim(),
       priority,
       due_date: dueDate,
+      subtasks,
       column_id: selectedColumnId,
     });
     if (createAnother) {
@@ -162,14 +208,20 @@ function CardEditorModal({
       setLabel("");
       setPriority("none");
       setDueDate(null);
+      setSubtasks([]);
+      setSubtaskDraft("");
       setSelectedColumnId(columnId);
       setIsEditingLabel(false);
+      setOpenDropdown(null);
     } else {
       onClose();
     }
   };
 
   const modalTitle = card ? MODAL_TITLE_EDIT : MODAL_TITLE_CREATE;
+  const selectedPriorityLabel =
+    PRIORITY_OPTIONS.find((option) => option.value === priority)?.label ??
+    PRIORITY_LABELS.none;
   const selectedColumnTitle =
     columns.find((column) => column.id === selectedColumnId)?.title ??
     columnTitle ??
@@ -306,13 +358,45 @@ function CardEditorModal({
           {/* Subtasks */}
           <div>
             <p className="text-sm font-medium text-gray-700 mb-1.5 dark:text-gray-300">{SUBTASKS_LABEL}</p>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                disabled
-                className="w-4 h-4 rounded border-gray-300 opacity-50 cursor-not-allowed"
-              />
-              <span className="text-sm text-gray-400 dark:text-gray-500">{SUBTASKS_PLACEHOLDER}</span>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={subtaskDraft}
+                  onChange={handleSubtaskDraftChange}
+                  onKeyDown={handleSubtaskKeyDown}
+                  placeholder={SUBTASK_INPUT_PLACEHOLDER}
+                  className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-200 dark:placeholder:text-gray-600"
+                />
+                <Button size="sm" variant="secondary" onClick={handleAddSubtask}>
+                  {ADD_SUBTASK_LABEL}
+                </Button>
+              </div>
+              {subtasks.length === 0 ? (
+                <span className="text-sm text-gray-400 dark:text-gray-500">{SUBTASKS_PLACEHOLDER}</span>
+              ) : (
+                <div className="flex flex-col gap-1.5">
+                  {subtasks.map((subtask, index) => (
+                    <div
+                      key={`${subtask}-${index}`}
+                      className="flex items-center gap-2 rounded-lg border border-gray-100 px-3 py-2 dark:border-gray-800"
+                    >
+                      <span className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600" />
+                      <span className="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-200">
+                        {subtask}
+                      </span>
+                      <button
+                        type="button"
+                        aria-label={REMOVE_SUBTASK_LABEL}
+                        onClick={() => handleRemoveSubtask(index)}
+                        className="flex h-6 w-6 items-center justify-center rounded text-gray-400 hover:bg-red-50 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 cursor-pointer dark:hover:bg-red-500/10 dark:hover:text-red-300"
+                      >
+                        <i className="ti ti-x text-xs" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -323,26 +407,46 @@ function CardEditorModal({
           {/* Status */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide dark:text-gray-400">{RIGHT_PANEL_LABELS.STATUS}</span>
-            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 cursor-pointer focus-within:ring-2 focus-within:ring-blue-500 dark:border-gray-700 dark:hover:bg-gray-800">
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <i className="ti ti-circle-dot text-blue-500 text-sm" />
-                <select
-                  value={selectedColumnId}
-                  onChange={handleStatusChange}
-                  className="appearance-none border-0 bg-transparent text-sm text-gray-700 focus:outline-none cursor-pointer flex-1 min-w-0 pr-5 dark:text-gray-200"
-                >
+            <div className="relative">
+              <button
+                type="button"
+                aria-label={STATUS_DROPDOWN_LABEL}
+                aria-expanded={openDropdown === "status"}
+                onClick={handleStatusToggle}
+                className="w-full flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+              >
+                <span className="flex items-center gap-2 min-w-0">
+                  <i className="ti ti-circle-dot text-blue-500 text-sm shrink-0" />
+                  <span className="truncate">{selectedColumnTitle}</span>
+                </span>
+                <i className="ti ti-chevron-down text-gray-400 text-xs shrink-0 dark:text-gray-500" />
+              </button>
+              {openDropdown === "status" && (
+                <div className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-950">
                   {columns.length === 0 ? (
-                    <option value={selectedColumnId}>{selectedColumnTitle}</option>
+                    <div className="px-3 py-2 text-sm text-gray-400 dark:text-gray-500">
+                      {EMPTY_OPTION_LABEL}
+                    </div>
                   ) : (
                     columns.map((column) => (
-                      <option key={column.id} value={column.id}>
-                        {column.title}
-                      </option>
+                      <button
+                        key={column.id}
+                        type="button"
+                        onClick={() => handleStatusSelect(column.id)}
+                        className={clsx(
+                          "w-full flex items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50 focus-visible:outline-none focus-visible:bg-gray-50 cursor-pointer dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800",
+                          column.id === selectedColumnId
+                            ? "text-blue-600 dark:text-blue-300"
+                            : "text-gray-700 dark:text-gray-200"
+                        )}
+                      >
+                        <i className="ti ti-circle-dot text-blue-500 text-sm shrink-0" />
+                        <span className="truncate">{column.title}</span>
+                      </button>
                     ))
                   )}
-                </select>
-              </div>
-              <i className="ti ti-chevron-down text-gray-400 text-xs pointer-events-none dark:text-gray-500" />
+                </div>
+              )}
             </div>
           </div>
 
@@ -386,20 +490,40 @@ function CardEditorModal({
           {/* Priority (functional select) */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide dark:text-gray-400">{RIGHT_PANEL_LABELS.PRIORITY}</span>
-            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 dark:border-gray-700">
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <i className={clsx("ti text-sm shrink-0", priority === "high" ? "ti-arrow-up text-red-500 dark:text-red-400" : "ti-minus text-gray-400 dark:text-gray-500")} />
-                <select
-                  value={priority}
-                  onChange={handlePriorityChange}
-                  className="appearance-none border-0 bg-transparent text-sm text-gray-700 focus:outline-none cursor-pointer flex-1 min-w-0 pr-5 dark:text-gray-200"
-                >
-                  {PRIORITY_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+            <div className="relative">
+              <button
+                type="button"
+                aria-label={PRIORITY_DROPDOWN_LABEL}
+                aria-expanded={openDropdown === "priority"}
+                onClick={handlePriorityToggle}
+                className="w-full flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+              >
+                <span className="flex items-center gap-2 min-w-0">
+                  <i className={clsx("ti text-sm shrink-0", priority === "high" ? "ti-arrow-up text-red-500 dark:text-red-400" : "ti-minus text-gray-400 dark:text-gray-500")} />
+                  <span className="truncate">{selectedPriorityLabel}</span>
+                </span>
+                <i className="ti ti-chevron-down text-gray-400 text-xs shrink-0 dark:text-gray-500" />
+              </button>
+              {openDropdown === "priority" && (
+                <div className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-950">
+                  {PRIORITY_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => handlePrioritySelect(option.value)}
+                      className={clsx(
+                        "w-full flex items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50 focus-visible:outline-none focus-visible:bg-gray-50 cursor-pointer dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800",
+                        option.value === priority
+                          ? "text-blue-600 dark:text-blue-300"
+                          : "text-gray-700 dark:text-gray-200"
+                      )}
+                    >
+                      <i className={clsx("ti text-sm shrink-0", option.value === "high" ? "ti-arrow-up text-red-500 dark:text-red-400" : "ti-minus text-gray-400 dark:text-gray-500")} />
+                      <span>{option.label}</span>
+                    </button>
                   ))}
-                </select>
-              </div>
-              <i className="ti ti-chevron-down text-gray-400 text-xs shrink-0 pointer-events-none dark:text-gray-500" />
+                </div>
+              )}
             </div>
           </div>
 

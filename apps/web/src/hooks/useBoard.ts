@@ -121,6 +121,7 @@ function useBoard(): UseBoardResult {
         label: draft.label,
         priority: draft.priority,
         due_date: draft.due_date,
+        subtasks: draft.subtasks,
         order: getNextOrder(columnCards),
       });
 

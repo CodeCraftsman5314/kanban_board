@@ -22,6 +22,7 @@ export interface Card extends Record<string, unknown> {
   label: string;
   priority: Priority;
   due_date: string | null;
+  subtasks: string[];
 }
 
 export interface RealtimePayload<T extends Record<string, unknown>> {
@@ -45,12 +46,13 @@ export interface Database {
       };
       cards: {
         Row: Card;
-        Insert: Omit<Card, "id" | "created_at" | "label" | "priority" | "due_date"> & {
+        Insert: Omit<Card, "id" | "created_at" | "label" | "priority" | "due_date" | "subtasks"> & {
           id?: ID;
           created_at?: string;
           label?: string;
           priority?: Priority;
           due_date?: string | null;
+          subtasks?: string[];
         };
         Update: Partial<Card>;
         Relationships: [];
