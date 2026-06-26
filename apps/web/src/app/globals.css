@@ -2,6 +2,7 @@
 
 @theme {
   --animate-fade-in: fade-in 0.15s ease-out;
+  --color-sidebar-bg: #111827;
 }
 
 @keyframes fade-in {

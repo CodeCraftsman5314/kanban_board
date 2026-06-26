@@ -3,101 +3,93 @@
 import type { DragEvent, ReactElement } from "react";
 import { clsx } from "clsx";
 
-import type { Card, Column, DragState } from "@/types";
-import { DROP_TARGET_HIGHLIGHT, LABELS } from "@/constants";
-import { Badge, Button } from "@/components/atoms";
+import type { Card, Column } from "@/types";
+import { LABELS } from "@/constants";
+import { Badge } from "@/components/atoms";
 import KanbanCard from "@/components/organisms/KanbanCard";
 
 interface KanbanColumnProps {
   column: Column;
   cards: Card[];
-  dragState: DragState;
-  isDropTarget: boolean;
+  index: number;
   onAddCard: (columnId: string) => void;
-  onEditCard: (card: Card) => void;
-  onDeleteCard: (cardId: string) => void;
-  onCardDragStart: (card: Card) => void;
-  onCardDragEnd: () => void;
-  onColumnDrop: (columnId: string) => void;
-  onColumnDragOver: (columnId: string) => void;
+  onCardClick: (card: Card) => void;
+  onCardDelete: (cardId: string) => void;
+  onCardDrop: (cardId: string, targetColumnId: string) => void;
 }
 
-const COLUMN_CLASSES = clsx(
-  "flex h-full min-h-96 w-80 flex-shrink-0 flex-col",
-  "rounded-lg border border-gray-200 bg-gray-50"
-);
-
-const HEADER_CLASSES = clsx(
-  "flex h-14 items-center justify-between border-b border-gray-200 px-4"
-);
-
-const TITLE_GROUP_CLASSES = clsx("flex min-w-0 items-center gap-2");
-const TITLE_CLASSES = clsx("truncate text-sm font-semibold text-gray-900");
-const BODY_CLASSES = clsx("flex flex-1 flex-col gap-3 p-3 transition-all duration-200");
-const EMPTY_CLASSES = clsx(
-  "flex min-h-32 items-center justify-center rounded-lg border border-dashed",
-  "border-gray-300 px-4 text-center text-sm text-gray-500"
-);
+const COLUMN_ACCENT_COLORS = [
+  "border-l-blue-500",
+  "border-l-amber-500",
+  "border-l-green-500",
+  "border-l-purple-500",
+] as const;
 
 function KanbanColumn({
   column,
   cards,
-  dragState,
-  isDropTarget,
+  index,
   onAddCard,
-  onEditCard,
-  onDeleteCard,
-  onCardDragStart,
-  onCardDragEnd,
-  onColumnDrop,
-  onColumnDragOver,
+  onCardClick,
+  onCardDelete,
+  onCardDrop,
 }: KanbanColumnProps): ReactElement {
-  const handleAddCard = (): void => {
-    onAddCard(column.id);
-  };
-
   const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
     event.preventDefault();
-    onColumnDragOver(column.id);
   };
 
   const handleDrop = (event: DragEvent<HTMLDivElement>): void => {
     event.preventDefault();
-    onColumnDrop(column.id);
+    const cardId = event.dataTransfer.getData("cardId");
+    if (cardId) {
+      onCardDrop(cardId, column.id);
+    }
+  };
+
+  const handleAddCard = (): void => {
+    onAddCard(column.id);
   };
 
   return (
-    <section className={clsx(COLUMN_CLASSES)}>
-      <header className={clsx(HEADER_CLASSES)}>
-        <div className={clsx(TITLE_GROUP_CLASSES)}>
-          <h2 className={clsx(TITLE_CLASSES)}>{column.title}</h2>
-          <Badge count={cards.length} />
-        </div>
-        <Button variant="ghost" size="sm" onClick={handleAddCard}>
-          {LABELS.ADD_CARD}
-        </Button>
-      </header>
+    <div
+      className={clsx(
+        "flex flex-col w-72 shrink-0 bg-white rounded-xl border border-gray-200 border-l-4 max-h-full",
+        COLUMN_ACCENT_COLORS[index % COLUMN_ACCENT_COLORS.length]
+      )}
+    >
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        <span className="text-sm font-semibold text-gray-800">{column.title}</span>
+        <Badge count={cards.length} />
+      </div>
       <div
+        className="flex-1 overflow-y-auto px-3 py-3 flex flex-col gap-2"
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        className={clsx(BODY_CLASSES, isDropTarget && DROP_TARGET_HIGHLIGHT)}
       >
-        {cards.length === 0 && (
-          <div className={clsx(EMPTY_CLASSES)}>{LABELS.EMPTY_COLUMN}</div>
+        {cards.length === 0 ? (
+          <div className="flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg m-2 p-6 text-sm text-gray-400 text-center min-h-24">
+            {LABELS.EMPTY_COLUMN}
+          </div>
+        ) : (
+          cards.map((card) => (
+            <KanbanCard
+              key={card.id}
+              card={card}
+              onCardClick={onCardClick}
+              onDelete={onCardDelete}
+            />
+          ))
         )}
-        {cards.map((card) => (
-          <KanbanCard
-            key={card.id}
-            card={card}
-            isDragging={dragState?.cardId === card.id}
-            onDragStart={onCardDragStart}
-            onDragEnd={onCardDragEnd}
-            onEdit={onEditCard}
-            onDelete={onDeleteCard}
-          />
-        ))}
       </div>
-    </section>
+      <button
+        type="button"
+        onClick={handleAddCard}
+        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-t border-gray-100 transition-colors duration-200 cursor-pointer"
+      >
+        <i className="ti ti-plus text-gray-400" />
+        {LABELS.ADD_CARD}
+      </button>
+    </div>
   );
 }
 

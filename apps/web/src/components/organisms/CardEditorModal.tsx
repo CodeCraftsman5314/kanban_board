@@ -143,7 +143,7 @@ function CardEditorModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={card ? LABELS.EDIT_CARD : LABELS.NEW_CARD}
+      title={card ? LABELS.EDIT_CARD : LABELS.ADD_NEW_CARD}
     >
       <form className={clsx(FORM_CLASSES)} onSubmit={handleFormSubmit}>
         <FormField
