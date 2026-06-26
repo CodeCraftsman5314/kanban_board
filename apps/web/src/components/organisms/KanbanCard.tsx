@@ -1,7 +1,6 @@
 "use client";
 
 import type { DragEvent, MouseEvent, ReactElement } from "react";
-import { clsx } from "clsx";
 
 import type { Card } from "@/types";
 import { LABELS } from "@/constants";
@@ -13,7 +12,6 @@ interface KanbanCardProps {
   onDelete: (cardId: string) => void;
 }
 
-const LINE_CLAMP_CLASS = "line-clamp-2";
 
 function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElement {
   const handleDragStart = (event: DragEvent<HTMLDivElement>): void => {
@@ -42,17 +40,17 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
       draggable
       onDragStart={handleDragStart}
       onClick={handleClick}
-      className="group relative bg-white rounded-lg border border-gray-200 p-3 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all duration-150 select-none"
+      className="group relative bg-white rounded-lg border border-gray-200 p-4 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all duration-150 select-none"
     >
-      <p className="text-sm font-medium text-gray-900 leading-snug">{card.title}</p>
+      <p className="text-sm font-semibold text-gray-900 leading-snug">{card.title}</p>
       {card.description && (
-        <p className={clsx("text-xs text-gray-500 mt-1", LINE_CLAMP_CLASS)}>
+        <p className="text-sm text-gray-500 mt-1 line-clamp-2">
           {card.description}
         </p>
       )}
       {hasBadges && (
         <div className="mt-3 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
             {hasLabel && <LabelBadge label={card.label} />}
             {hasPriority && <PriorityBadge priority={card.priority} />}
           </div>
@@ -63,7 +61,7 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
         type="button"
         onClick={handleDelete}
         aria-label={LABELS.DELETE}
-        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all duration-150 cursor-pointer"
+        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 w-6 h-6 flex items-center justify-center rounded text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all duration-150 cursor-pointer"
       >
         <i className="ti ti-trash" style={{ fontSize: "11px" }} />
       </button>

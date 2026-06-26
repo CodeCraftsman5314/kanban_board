@@ -5,7 +5,7 @@ export const MAX_CARD_DESCRIPTION_LENGTH = 500;
 export const COLUMN_HEADER_HEIGHT = 56;
 
 export const LABELS = {
-  ADD_CARD: "+ Add Card",
+  ADD_CARD: "Add Card",
   ADD_NEW_CARD: "Add new card",
   BOARD_TITLE: "Team Kanban",
   BOARD_SUBTITLE: "Realtime planning board",
