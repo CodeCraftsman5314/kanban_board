@@ -6,22 +6,22 @@ import type { ReactElement } from "react";
 import { clsx } from "clsx";
 
 interface SidebarNavItem {
-  icon: string;
+  iconClass: string;
   label: string;
   isActive: boolean;
 }
 
 const NAV_ITEMS: SidebarNavItem[] = [
-  { icon: "home", label: "Home", isActive: false },
-  { icon: "layout-board", label: "Board", isActive: true },
-  { icon: "check", label: "Tasks", isActive: false },
-  { icon: "calendar", label: "Calendar", isActive: false },
-  { icon: "chart-bar", label: "Analytics", isActive: false },
-  { icon: "users", label: "Members", isActive: false },
+  { iconClass: "ti-home", label: "Home", isActive: false },
+  { iconClass: "ti-layout-board", label: "Board", isActive: true },
+  { iconClass: "ti-check", label: "Tasks", isActive: false },
+  { iconClass: "ti-calendar", label: "Calendar", isActive: false },
+  { iconClass: "ti-chart-bar", label: "Analytics", isActive: false },
+  { iconClass: "ti-users", label: "Members", isActive: false },
 ] as const;
 
 const SIDEBAR_TOGGLE_LABEL = "Toggle sidebar";
-const SETTINGS_ITEM: SidebarNavItem = { icon: "settings", label: "Settings", isActive: false };
+const SETTINGS_ITEM: SidebarNavItem = { iconClass: "ti-settings", label: "Settings", isActive: false };
 
 function Sidebar(): ReactElement {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -46,7 +46,7 @@ function Sidebar(): ReactElement {
       onClick={handleToggle}
       onKeyDown={handleKeyDown}
       className={clsx(
-        "h-screen bg-gray-50 border-r border-gray-200 flex flex-col items-center py-5 shrink-0 overflow-hidden transition-all duration-200 ease-in-out cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-inset",
+        "h-screen bg-gray-50 border-r border-gray-200 flex flex-col items-center py-5 shrink-0 overflow-hidden transition-all duration-200 ease-in-out cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-inset dark:bg-gray-950 dark:border-gray-800 dark:focus:ring-blue-900",
         isExpanded ? "w-64" : "w-20"
       )}
     >
@@ -57,7 +57,7 @@ function Sidebar(): ReactElement {
         </div>
         <span
           className={clsx(
-            "text-base font-semibold text-gray-900 whitespace-nowrap overflow-hidden transition-all duration-200",
+            "text-base font-semibold text-gray-900 whitespace-nowrap overflow-hidden transition-all duration-200 dark:text-gray-100",
             isExpanded ? "opacity-100" : "opacity-0"
           )}
         >
@@ -69,15 +69,15 @@ function Sidebar(): ReactElement {
       <nav className="flex-1 flex flex-col gap-2 w-full px-3">
         {NAV_ITEMS.map((item) => (
           <div
-            key={item.icon}
+            key={item.iconClass}
             className={clsx(
               "w-full min-h-16 flex items-center gap-4 px-3 rounded-lg transition-colors duration-150 cursor-pointer",
               item.isActive
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                ? "bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-900"
             )}
           >
-            <i className={`ti ti-${item.icon} text-2xl shrink-0`} />
+            <i className={clsx("ti text-2xl shrink-0", item.iconClass)} />
             <span
               className={clsx(
                 "text-base font-medium whitespace-nowrap overflow-hidden transition-all duration-200",
@@ -96,11 +96,11 @@ function Sidebar(): ReactElement {
           className={clsx(
             "w-full min-h-16 flex items-center gap-4 px-3 rounded-lg transition-colors duration-150 cursor-pointer",
             SETTINGS_ITEM.isActive
-              ? "bg-blue-50 text-blue-600"
-              : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              ? "bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300"
+              : "text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-900"
           )}
         >
-          <i className={`ti ti-${SETTINGS_ITEM.icon} text-2xl shrink-0`} />
+          <i className={clsx("ti text-2xl shrink-0", SETTINGS_ITEM.iconClass)} />
           <span
             className={clsx(
               "text-base font-medium whitespace-nowrap overflow-hidden transition-all duration-200",

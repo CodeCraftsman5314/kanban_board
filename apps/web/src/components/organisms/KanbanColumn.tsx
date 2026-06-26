@@ -61,18 +61,18 @@ function KanbanColumn({
   return (
     <div
       className={clsx(
-        "flex flex-col w-80 shrink-0 bg-white rounded-xl border border-gray-200 border-t-2 max-h-full",
+        "flex flex-col w-80 shrink-0 bg-white rounded-xl border border-gray-200 border-t-2 max-h-full dark:bg-gray-900 dark:border-gray-800",
         COLUMN_ACCENT_COLORS[accentIndex]
       )}
     >
       <div className="flex items-center justify-between px-4 py-4">
         <div className="flex items-center gap-2">
           <span className={clsx("w-2.5 h-2.5 rounded-full shrink-0", COLUMN_DOT_COLORS[accentIndex])} />
-          <span className="text-base font-semibold text-gray-800">{column.title}</span>
-          <span className="text-sm text-gray-500 font-normal">{cards.length}</span>
+          <span className="text-base font-semibold text-gray-800 dark:text-gray-100">{column.title}</span>
+          <span className="text-sm text-gray-500 font-normal dark:text-gray-400">{cards.length}</span>
         </div>
         <div className="flex items-center gap-1">
-          <i className="ti ti-dots text-gray-400 hover:text-gray-600 cursor-pointer" />
+          <i className="ti ti-dots text-gray-400 hover:text-gray-600 cursor-pointer dark:text-gray-500 dark:hover:text-gray-200" />
         </div>
       </div>
       <div
@@ -81,7 +81,7 @@ function KanbanColumn({
         onDrop={handleDrop}
       >
         {cards.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center p-4 text-sm text-gray-400 text-center">
+          <div className="flex-1 flex items-center justify-center p-4 text-sm text-gray-400 text-center dark:text-gray-500">
             {LABELS.EMPTY_COLUMN}
           </div>
         ) : (
@@ -98,7 +98,7 @@ function KanbanColumn({
       <button
         type="button"
         onClick={handleAddCard}
-        className="w-full px-3 py-2.5 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-t border-gray-100 transition-colors duration-150 cursor-pointer text-left"
+        className="w-full px-3 py-2.5 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-t border-gray-100 transition-colors duration-150 cursor-pointer text-left dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-800 dark:border-gray-800"
       >
         {LABELS.ADD_CARD}
       </button>

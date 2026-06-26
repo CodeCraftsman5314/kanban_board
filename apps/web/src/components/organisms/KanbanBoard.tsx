@@ -44,10 +44,10 @@ function KanbanBoard(): ReactElement {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="flex flex-col items-center gap-3">
           <Spinner size="lg" />
-          <p className="text-sm text-gray-500">{LABELS.LOADING}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{LABELS.LOADING}</p>
         </div>
       </div>
     );
@@ -55,8 +55,8 @@ function KanbanBoard(): ReactElement {
 
   if (error) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
-        <p className="text-sm text-red-500">{LABELS.ERROR_LOADING}</p>
+      <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-950">
+        <p className="text-sm text-red-500 dark:text-red-400">{LABELS.ERROR_LOADING}</p>
       </div>
     );
   }
@@ -91,27 +91,27 @@ function KanbanBoard(): ReactElement {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-100">
+    <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-950">
       <div className="hidden md:block shrink-0">
         <Sidebar />
       </div>
       <div className="flex-1 flex flex-col overflow-hidden">
 
         {/* Row 1: Title + avatars + live status */}
-        <div className="flex items-center justify-between px-3 md:px-6 h-14 bg-white border-b border-gray-100 shrink-0">
+        <div className="flex items-center justify-between px-3 md:px-6 h-14 bg-white border-b border-gray-100 shrink-0 dark:bg-gray-900 dark:border-gray-800">
           <div className="flex items-center gap-1">
-            <span className="text-base md:text-lg font-semibold text-gray-900">{BOARD_TITLE}</span>
-            <i className="ti ti-chevron-down text-gray-400 text-sm ml-1" />
-            <i className="ti ti-star text-gray-400 text-sm ml-2" />
+            <span className="text-base md:text-lg font-semibold text-gray-900 dark:text-gray-100">{BOARD_TITLE}</span>
+            <i className="ti ti-chevron-down text-gray-400 dark:text-gray-500 text-sm ml-1" />
+            <i className="ti ti-star text-gray-400 dark:text-gray-500 text-sm ml-2" />
           </div>
           <div className="flex items-center">
             <div className="hidden md:flex items-center">
-              <div className="w-7 h-7 rounded-full bg-gray-300 border-2 border-white" />
-              <div className="w-7 h-7 rounded-full bg-gray-400 border-2 border-white -ml-2" />
-              <div className="w-7 h-7 rounded-full bg-gray-500 border-2 border-white -ml-2" />
-              <span className="ml-1.5 text-xs text-gray-500 font-medium">{AVATAR_OVERFLOW}</span>
+              <div className="w-7 h-7 rounded-full bg-gray-300 border-2 border-white dark:bg-gray-600 dark:border-gray-900" />
+              <div className="w-7 h-7 rounded-full bg-gray-400 border-2 border-white -ml-2 dark:bg-gray-500 dark:border-gray-900" />
+              <div className="w-7 h-7 rounded-full bg-gray-500 border-2 border-white -ml-2 dark:bg-gray-400 dark:border-gray-900" />
+              <span className="ml-1.5 text-xs text-gray-500 font-medium dark:text-gray-400">{AVATAR_OVERFLOW}</span>
             </div>
-            <span className="hidden md:block w-px h-5 bg-gray-200 mx-3" />
+            <span className="hidden md:block w-px h-5 bg-gray-200 mx-3 dark:bg-gray-800" />
             <ConnectionBadge status={connectionStatus} userCount={1} />
             <span className="ml-2">
               <ThemeToggle />
@@ -120,15 +120,15 @@ function KanbanBoard(): ReactElement {
         </div>
 
         {/* Nav tabs row */}
-        <div className="hidden md:flex items-center px-4 bg-white border-b border-gray-200 shrink-0">
+        <div className="hidden md:flex items-center px-4 bg-white border-b border-gray-200 shrink-0 dark:bg-gray-900 dark:border-gray-800">
           {NAV_TABS.map((tab) => (
             <div
               key={tab}
               className={clsx(
                 "px-3 py-2 text-sm cursor-pointer transition-colors",
                 tab === ACTIVE_TAB
-                  ? "text-blue-600 border-b-2 border-blue-600 font-medium"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "text-blue-600 border-b-2 border-blue-600 font-medium dark:text-blue-400 dark:border-blue-400"
+                  : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               )}
             >
               {tab}
@@ -137,17 +137,17 @@ function KanbanBoard(): ReactElement {
         </div>
 
         {/* Row 2: Search + Group/Sort */}
-        <div className="flex items-center justify-between px-3 md:px-4 h-10 bg-white border-b border-gray-200 shrink-0">
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <i className="ti ti-search text-gray-400" />
+        <div className="flex items-center justify-between px-3 md:px-4 h-10 bg-white border-b border-gray-200 shrink-0 dark:bg-gray-900 dark:border-gray-800">
+          <div className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
+            <i className="ti ti-search text-gray-400 dark:text-gray-500" />
             <span>{SEARCH_PLACEHOLDER}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="hidden md:flex items-center gap-2">
-              <button type="button" className="text-sm text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-100 transition-colors cursor-pointer">
+              <button type="button" className="text-sm text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-100 transition-colors cursor-pointer dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800">
                 {GROUP_LABEL}
               </button>
-              <button type="button" className="text-sm text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-100 transition-colors cursor-pointer">
+              <button type="button" className="text-sm text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-100 transition-colors cursor-pointer dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800">
                 {SORT_LABEL}
               </button>
             </div>
@@ -155,7 +155,7 @@ function KanbanBoard(): ReactElement {
         </div>
 
         {/* Board columns */}
-        <div className="flex-1 overflow-x-auto overflow-y-hidden bg-gray-100">
+        <div className="flex-1 overflow-x-auto overflow-y-hidden bg-gray-100 dark:bg-gray-950">
           <div className="flex gap-3 md:gap-4 px-3 py-3 md:px-6 md:py-6 h-full items-start min-w-max">
             {columns.map((column, index) => (
               <KanbanColumn

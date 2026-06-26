@@ -15,9 +15,9 @@ interface ModalProps {
 }
 
 const BACKDROP_CLASSES = "fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in";
-const MODAL_CLASSES = "bg-white rounded-xl shadow-2xl w-full max-h-screen overflow-y-auto";
-const HEADER_CLASSES = "flex items-center justify-between p-6 border-b border-gray-100";
-const TITLE_CLASSES = "text-lg font-semibold text-gray-900";
+const MODAL_CLASSES = "bg-white rounded-xl shadow-2xl w-full max-h-screen overflow-y-auto dark:bg-gray-900 dark:shadow-black/40";
+const HEADER_CLASSES = "flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800";
+const TITLE_CLASSES = "text-lg font-semibold text-gray-900 dark:text-gray-100";
 const BODY_CLASSES = "p-6";
 const ESCAPE_KEY = "Escape" as const;
 const CLOSE_ARIA_LABEL = "Close modal" as const;

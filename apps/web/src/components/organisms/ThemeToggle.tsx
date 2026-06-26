@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactElement } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 
 import type { ThemeMode } from "@/types";
@@ -10,19 +10,35 @@ interface ThemeToggleProps {
   className?: string;
 }
 
-const BUTTON_CLASSES = "w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors duration-150 cursor-pointer";
+const BUTTON_CLASSES = "w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-gray-800 transition-colors duration-150 cursor-pointer";
+const THEME_STORAGE_KEY = "kanban-theme";
+
+const applyTheme = (theme: ThemeMode): void => {
+  document.documentElement.classList.toggle("dark", theme === "dark");
+  document.documentElement.style.colorScheme = theme;
+};
 
 function ThemeToggle({ className }: ThemeToggleProps): ReactElement {
   const [theme, setTheme] = useState<ThemeMode>("light");
 
+  useEffect(() => {
+    const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const initialTheme: ThemeMode = savedTheme === "dark" || savedTheme === "light"
+      ? savedTheme
+      : prefersDark
+        ? "dark"
+        : "light";
+
+    setTheme(initialTheme);
+    applyTheme(initialTheme);
+  }, []);
+
   const handleToggle = (): void => {
     const next: ThemeMode = theme === "light" ? "dark" : "light";
     setTheme(next);
-    if (next === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    window.localStorage.setItem(THEME_STORAGE_KEY, next);
+    applyTheme(next);
   };
 
   return (

@@ -40,11 +40,11 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
       draggable
       onDragStart={handleDragStart}
       onClick={handleClick}
-      className="group relative bg-white rounded-lg border border-gray-200 p-4 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all duration-150 select-none"
+      className="group relative bg-white rounded-lg border border-gray-200 p-4 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all duration-150 select-none dark:bg-gray-950 dark:border-gray-800 dark:hover:border-gray-700 dark:hover:shadow-none"
     >
-      <p className="text-sm font-semibold text-gray-900 leading-snug">{card.title}</p>
+      <p className="text-sm font-semibold text-gray-900 leading-snug dark:text-gray-100">{card.title}</p>
       {card.description && (
-        <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+        <p className="text-sm text-gray-500 mt-1 line-clamp-2 dark:text-gray-400">
           {card.description}
         </p>
       )}
@@ -61,7 +61,7 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
         type="button"
         onClick={handleDelete}
         aria-label={LABELS.DELETE}
-        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 w-6 h-6 flex items-center justify-center rounded text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all duration-150 cursor-pointer"
+        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 w-6 h-6 flex items-center justify-center rounded text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all duration-150 cursor-pointer dark:text-gray-600 dark:hover:text-red-300 dark:hover:bg-red-500/10"
       >
         <i className="ti ti-trash" style={{ fontSize: "11px" }} />
       </button>

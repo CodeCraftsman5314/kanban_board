@@ -5,6 +5,15 @@
   --animate-fade-in: fade-in 0.15s ease-out;
 }
 
+html,
+body {
+  background: #f3f4f6;
+}
+
+.dark body {
+  background: #030712;
+}
+
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
