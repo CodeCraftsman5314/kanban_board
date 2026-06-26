@@ -92,6 +92,8 @@ function KanbanBoard(): ReactElement {
   };
 
   const handleCardDrop = (cardId: string, targetColumnId: string): void => {
+    const droppedCard = Object.values(cards).flat().find((card) => card.id === cardId);
+    if (!droppedCard || droppedCard.column_id === targetColumnId) return;
     void moveCardToColumn(cardId, targetColumnId);
   };
 

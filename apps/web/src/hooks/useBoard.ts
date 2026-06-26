@@ -177,11 +177,37 @@ function useBoard(): UseBoardResult {
 
   const moveCardToColumn = useCallback(
     async (cardId: string, targetColumnId: string): Promise<boolean> => {
+      const cardToMove = Object.values(boardState.cards)
+        .flat()
+        .find((card) => card.id === cardId);
+
+      if (!cardToMove) return false;
+      if (cardToMove.column_id === targetColumnId) return true;
+
       const targetCards = boardState.cards[targetColumnId] ?? [];
+      const nextOrder = getNextOrder(targetCards);
+
+      setBoardState((currentState) => {
+        const currentSourceCards = currentState.cards[cardToMove.column_id] ?? [];
+        const currentTargetCards = currentState.cards[targetColumnId] ?? [];
+
+        return {
+          ...currentState,
+          cards: {
+            ...currentState.cards,
+            [cardToMove.column_id]: currentSourceCards.filter((card) => card.id !== cardId),
+            [targetColumnId]: [
+              ...currentTargetCards,
+              { ...cardToMove, column_id: targetColumnId, order: nextOrder },
+            ],
+          },
+        };
+      });
+
       const result = await moveCard({
         cardId,
         targetColumnId,
-        newOrder: getNextOrder(targetCards),
+        newOrder: nextOrder,
       });
 
       if (result.error) {
@@ -189,10 +215,10 @@ function useBoard(): UseBoardResult {
           ...currentState,
           error: result.error,
         }));
+        await refreshBoard();
         return false;
       }
 
-      await refreshBoard();
       return true;
     },
     [boardState.cards, refreshBoard]

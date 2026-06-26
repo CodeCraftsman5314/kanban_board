@@ -1,6 +1,8 @@
 "use client";
 
 import type { DragEvent, MouseEvent, ReactElement } from "react";
+import { useState } from "react";
+import { clsx } from "clsx";
 
 import type { Card } from "@/types";
 import { LABELS, PRIORITY_LABELS } from "@/constants";
@@ -19,9 +21,16 @@ const CARD_DATE_LOCALE = "en";
 const MIN_CARD_ORDER = 0;
 
 function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElement {
+  const [isDragging, setIsDragging] = useState(false);
+
   const handleDragStart = (event: DragEvent<HTMLDivElement>): void => {
+    setIsDragging(true);
     event.dataTransfer.setData("cardId", card.id);
     event.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragEnd = (): void => {
+    setIsDragging(false);
   };
 
   const handleClick = (): void => {
@@ -48,8 +57,12 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
     <div
       draggable
       onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
       onClick={handleClick}
-      className="group relative z-10 min-h-40 cursor-pointer select-none overflow-hidden rounded-xl border border-gray-200 bg-white p-4 pl-7 shadow-md shadow-gray-200/70 ring-1 ring-white transition-all duration-150 hover:z-20 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100 dark:border-slate-700 dark:bg-slate-900 dark:shadow-lg dark:shadow-black/25 dark:ring-white/5 dark:hover:border-blue-500/40 dark:hover:bg-slate-800 dark:hover:shadow-black/40"
+      className={clsx(
+        "group relative z-10 min-h-40 select-none overflow-hidden rounded-xl border border-gray-200 bg-white p-4 pl-7 shadow-md shadow-gray-200/70 ring-1 ring-white transition-all duration-150 transition-opacity duration-200 hover:z-20 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100 dark:border-slate-700 dark:bg-slate-900 dark:shadow-lg dark:shadow-black/25 dark:ring-white/5 dark:hover:border-blue-500/40 dark:hover:bg-slate-800 dark:hover:shadow-black/40",
+        isDragging ? "cursor-grabbing opacity-50" : "cursor-grab"
+      )}
     >
       <span className="absolute bottom-4 left-4 top-4 w-1 rounded-full bg-blue-500 shadow-sm shadow-blue-300 dark:bg-blue-400 dark:shadow-blue-950" />
       <div className="flex items-center justify-between gap-3">
