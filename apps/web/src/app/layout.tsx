@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 import "@tabler/icons-webfont/dist/tabler-icons.min.css";
 import "./globals.css";
 
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+const METADATA_TITLE = "Kanban Board" as const;
+const METADATA_DESCRIPTION = "Kanban board application" as const;
+
 export const metadata: Metadata = {
-  title: "Kanban Board",
-  description: "Kanban board application",
+  title: METADATA_TITLE,
+  description: METADATA_DESCRIPTION,
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+function RootLayout({ children }: RootLayoutProps): ReactElement {
   return (
     <html lang="en">
       <body>{children}</body>
     </html>
   );
 }
+
+export default RootLayout;

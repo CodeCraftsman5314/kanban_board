@@ -1,7 +1,9 @@
 import baseConfig from "@repo/config/eslint";
 import tseslint from "typescript-eslint";
 
-export default tseslint.config(...baseConfig, {
+export default tseslint.config({
+  ignores: [".next/**", "eslint.config.ts"],
+}, ...baseConfig, {
   languageOptions: {
     parserOptions: {
       project: "./tsconfig.json",
