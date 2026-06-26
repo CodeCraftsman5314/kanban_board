@@ -40,16 +40,16 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
       draggable
       onDragStart={handleDragStart}
       onClick={handleClick}
-      className="group relative bg-white rounded-lg border border-gray-200 p-4 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all duration-150 select-none dark:bg-gray-950 dark:border-gray-800 dark:hover:border-gray-700 dark:hover:shadow-none"
+      className="group relative min-h-36 bg-white rounded-lg border border-gray-200 p-5 cursor-pointer hover:shadow-sm hover:border-gray-300 transition-all duration-150 select-none dark:bg-gray-950 dark:border-gray-800 dark:hover:border-gray-700 dark:hover:shadow-none"
     >
-      <p className="text-sm font-semibold text-gray-900 leading-snug dark:text-gray-100">{card.title}</p>
+      <p className="text-base font-semibold text-gray-900 leading-snug dark:text-gray-100">{card.title}</p>
       {card.description && (
-        <p className="text-sm text-gray-500 mt-1 line-clamp-2 dark:text-gray-400">
+        <p className="text-sm text-gray-500 mt-2 line-clamp-2 dark:text-gray-400">
           {card.description}
         </p>
       )}
       {hasBadges && (
-        <div className="mt-3 flex items-center justify-between">
+        <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-2 flex-wrap">
             {hasLabel && <LabelBadge label={card.label} />}
             {hasPriority && <PriorityBadge priority={card.priority} />}

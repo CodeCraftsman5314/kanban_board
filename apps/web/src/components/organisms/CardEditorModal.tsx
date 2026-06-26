@@ -4,26 +4,19 @@ import type { ChangeEvent, ReactElement } from "react";
 import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 
-import type { Card, Priority } from "@/types";
+import type { Card, CardDraft, Column, Priority } from "@/types";
 import { LABELS, PRIORITY_LABELS } from "@/constants";
 import { Button } from "@/components/atoms";
 import { Modal } from "@/components/molecules";
 
 interface CardEditorModalProps {
   isOpen: boolean;
+  columns: Column[];
   columnId: string;
   columnTitle: string;
   card: Card | null;
   onClose: () => void;
   onSave: (draft: CardDraft) => void;
-}
-
-interface CardDraft {
-  title: string;
-  description: string;
-  label: string;
-  priority: Priority;
-  due_date: string | null;
 }
 
 const MODAL_TITLE_CREATE = "Add a new card";
@@ -39,6 +32,10 @@ const SUBTASKS_LABEL = "Subtasks";
 const SUBTASKS_PLACEHOLDER = "Add subtasks";
 const CREATE_ANOTHER_LABEL = "Create another card";
 const SAVE_BUTTON_LABEL = "Create card";
+const EMPTY_OPTION_LABEL = "Not available";
+const CLOSE_MODAL_LABEL = "Close modal";
+const MINIMIZE_LABEL = "Minimize";
+const MAXIMIZE_LABEL = "Maximize";
 
 const RIGHT_PANEL_LABELS = {
   STATUS: "Status",
@@ -69,7 +66,8 @@ const isPriority = (value: string): value is Priority =>
 
 function CardEditorModal({
   isOpen,
-  columnId: _columnId,
+  columns,
+  columnId,
   columnTitle,
   card,
   onClose,
@@ -80,6 +78,7 @@ function CardEditorModal({
   const [label, setLabel] = useState("");
   const [priority, setPriority] = useState<Priority>("none");
   const [dueDate, setDueDate] = useState<string | null>(null);
+  const [selectedColumnId, setSelectedColumnId] = useState(columnId);
   const [titleError, setTitleError] = useState("");
   const [createAnother, setCreateAnother] = useState(false);
   const [isEditingLabel, setIsEditingLabel] = useState(false);
@@ -92,16 +91,18 @@ function CardEditorModal({
       setLabel(card.label);
       setPriority(card.priority);
       setDueDate(card.due_date);
+      setSelectedColumnId(card.column_id);
     } else {
       setTitle("");
       setDescription("");
       setLabel("");
       setPriority("none");
       setDueDate(null);
+      setSelectedColumnId(columnId);
     }
     setTitleError("");
     setIsEditingLabel(false);
-  }, [card, isOpen]);
+  }, [card, columnId, isOpen]);
 
   const handleTitleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setTitle(event.target.value);
@@ -133,6 +134,10 @@ function CardEditorModal({
     setDueDate(event.target.value || null);
   };
 
+  const handleStatusChange = (event: ChangeEvent<HTMLSelectElement>): void => {
+    setSelectedColumnId(event.target.value);
+  };
+
   const handleCreateAnotherChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setCreateAnother(event.target.checked);
   };
@@ -149,6 +154,7 @@ function CardEditorModal({
       label: label.trim(),
       priority,
       due_date: dueDate,
+      column_id: selectedColumnId,
     });
     if (createAnother) {
       setTitle("");
@@ -156,6 +162,7 @@ function CardEditorModal({
       setLabel("");
       setPriority("none");
       setDueDate(null);
+      setSelectedColumnId(columnId);
       setIsEditingLabel(false);
     } else {
       onClose();
@@ -163,24 +170,49 @@ function CardEditorModal({
   };
 
   const modalTitle = card ? MODAL_TITLE_EDIT : MODAL_TITLE_CREATE;
+  const selectedColumnTitle =
+    columns.find((column) => column.id === selectedColumnId)?.title ??
+    columnTitle ??
+    EMPTY_OPTION_LABEL;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-3xl">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-5xl">
       {/* Custom header */}
       <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-5 dark:border-gray-800">
-        <span className="text-base font-semibold text-gray-900 dark:text-gray-100">{modalTitle}</span>
+        <span className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{modalTitle}</span>
         <div className="flex items-center gap-3">
-          <i className="ti ti-minus text-gray-400 hover:text-gray-600 cursor-pointer text-sm dark:text-gray-500 dark:hover:text-gray-200" />
-          <i className="ti ti-arrows-maximize text-gray-400 hover:text-gray-600 cursor-pointer text-sm dark:text-gray-500 dark:hover:text-gray-200" />
-          <i className="ti ti-x text-gray-400 hover:text-gray-600 cursor-pointer text-sm dark:text-gray-500 dark:hover:text-gray-200" onClick={onClose} />
+          <button
+            type="button"
+            aria-label={MINIMIZE_LABEL}
+            disabled
+            className="text-gray-400 cursor-not-allowed opacity-60 text-sm dark:text-gray-600"
+          >
+            <i className="ti ti-minus" />
+          </button>
+          <button
+            type="button"
+            aria-label={MAXIMIZE_LABEL}
+            disabled
+            className="text-gray-400 cursor-not-allowed opacity-60 text-sm dark:text-gray-600"
+          >
+            <i className="ti ti-arrows-maximize" />
+          </button>
+          <button
+            type="button"
+            aria-label={CLOSE_MODAL_LABEL}
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer text-sm dark:text-gray-500 dark:hover:text-gray-200"
+          >
+            <i className="ti ti-x" />
+          </button>
         </div>
       </div>
 
       {/* Body: two-column layout */}
-      <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex flex-col md:flex-row gap-7">
 
         {/* ── Left column ── */}
-        <div className="flex-1 flex flex-col gap-5 min-w-0">
+        <div className="flex-1 flex flex-col gap-6 min-w-0">
 
           {/* Title */}
           <div>
@@ -197,7 +229,7 @@ function CardEditorModal({
                 placeholder={TITLE_PLACEHOLDER}
                 autoFocus
                 className={clsx(
-                  "w-full border rounded-lg px-3 py-2 text-sm pr-8",
+                  "w-full border rounded-lg px-3 py-3 text-sm pr-8",
                   "bg-white text-gray-900 placeholder:text-gray-400 dark:bg-gray-950 dark:text-gray-100 dark:placeholder:text-gray-600",
                   "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
                   titleError ? "border-red-400" : "border-gray-300 dark:border-gray-700"
@@ -219,7 +251,7 @@ function CardEditorModal({
               {LABELS.DESCRIPTION}
             </label>
             {/* Toolbar */}
-            <div className="flex items-center gap-0.5 border border-gray-200 border-b-0 rounded-t-lg px-2 py-1.5 bg-gray-50 flex-wrap dark:bg-gray-950 dark:border-gray-700">
+            <div className="flex items-center gap-0.5 border border-gray-200 border-b-0 rounded-t-lg px-2 py-2 bg-gray-50 flex-wrap dark:bg-gray-950 dark:border-gray-700">
               <button type="button" className="flex items-center gap-0.5 text-sm text-gray-600 cursor-pointer hover:bg-gray-200 px-1.5 py-0.5 rounded whitespace-nowrap dark:text-gray-300 dark:hover:bg-gray-800">
                 {DESCRIPTION_TOOLBAR_NORMAL}
                 <i className="ti ti-chevron-down text-xs text-gray-400 ml-0.5 dark:text-gray-500" />
@@ -248,7 +280,7 @@ function CardEditorModal({
               value={description}
               onChange={handleDescriptionChange}
               placeholder={DESCRIPTION_PLACEHOLDER}
-              className="w-full border border-gray-200 border-t-0 rounded-b-lg px-3 py-2.5 text-sm text-gray-500 min-h-36 resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-gray-400 dark:bg-gray-950 dark:border-gray-700 dark:text-gray-300 dark:placeholder:text-gray-600"
+              className="w-full border border-gray-200 border-t-0 rounded-b-lg px-3 py-3 text-sm text-gray-500 min-h-56 resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-gray-400 dark:bg-gray-950 dark:border-gray-700 dark:text-gray-300 dark:placeholder:text-gray-600"
             />
             <div className="flex items-center justify-between mt-1.5 px-0.5">
               <span className="text-xs text-gray-400 dark:text-gray-500">{DESCRIPTION_COMMANDS_HINT}</span>
@@ -262,7 +294,7 @@ function CardEditorModal({
           {/* Attachments */}
           <div>
             <p className="text-sm font-medium text-gray-700 mb-1.5 dark:text-gray-300">{ATTACHMENTS_LABEL}</p>
-            <div className="border-2 border-dashed border-gray-200 rounded-lg py-6 flex flex-col items-center justify-center gap-2 dark:border-gray-700">
+            <div className="border-2 border-dashed border-gray-200 rounded-lg py-8 flex flex-col items-center justify-center gap-2 dark:border-gray-700">
               <i className="ti ti-cloud-upload text-gray-300 text-2xl dark:text-gray-600" />
               <span className="text-sm text-gray-400 dark:text-gray-500">
                 {ATTACHMENTS_PLACEHOLDER}{" "}
@@ -286,29 +318,42 @@ function CardEditorModal({
         </div>
 
         {/* ── Right column ── */}
-        <div className="w-full md:w-60 shrink-0 flex flex-col gap-3 border-t md:border-t-0 md:border-l border-gray-100 pt-5 md:pt-0 md:pl-6 dark:border-gray-800">
+        <div className="w-full md:w-64 shrink-0 flex flex-col gap-4 border-t md:border-t-0 md:border-l border-gray-100 pt-5 md:pt-0 md:pl-6 dark:border-gray-800">
 
           {/* Status */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide dark:text-gray-400">{RIGHT_PANEL_LABELS.STATUS}</span>
-            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 cursor-pointer dark:border-gray-700 dark:hover:bg-gray-800">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 cursor-pointer focus-within:ring-2 focus-within:ring-blue-500 dark:border-gray-700 dark:hover:bg-gray-800">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
                 <i className="ti ti-circle-dot text-blue-500 text-sm" />
-                <span className="text-sm text-gray-700 dark:text-gray-200">{columnTitle}</span>
+                <select
+                  value={selectedColumnId}
+                  onChange={handleStatusChange}
+                  className="appearance-none border-0 bg-transparent text-sm text-gray-700 focus:outline-none cursor-pointer flex-1 min-w-0 pr-5 dark:text-gray-200"
+                >
+                  {columns.length === 0 ? (
+                    <option value={selectedColumnId}>{selectedColumnTitle}</option>
+                  ) : (
+                    columns.map((column) => (
+                      <option key={column.id} value={column.id}>
+                        {column.title}
+                      </option>
+                    ))
+                  )}
+                </select>
               </div>
-              <i className="ti ti-chevron-down text-gray-400 text-xs dark:text-gray-500" />
+              <i className="ti ti-chevron-down text-gray-400 text-xs pointer-events-none dark:text-gray-500" />
             </div>
           </div>
 
           {/* Assignee */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide dark:text-gray-400">{RIGHT_PANEL_LABELS.ASSIGNEE}</span>
-            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 cursor-pointer dark:border-gray-700 dark:hover:bg-gray-800">
+            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 dark:border-gray-700">
               <div className="flex items-center gap-2">
                 <i className="ti ti-user text-gray-400 text-sm dark:text-gray-500" />
                 <span className="text-sm text-gray-700 dark:text-gray-200">{RIGHT_PANEL_LABELS.UNASSIGNED}</span>
               </div>
-              <i className="ti ti-chevron-down text-gray-400 text-xs dark:text-gray-500" />
             </div>
           </div>
 
@@ -316,7 +361,7 @@ function CardEditorModal({
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide dark:text-gray-400">{RIGHT_PANEL_LABELS.LABELS}</span>
             <div
-              className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 cursor-pointer dark:border-gray-700 dark:hover:bg-gray-800"
+              className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 cursor-pointer dark:border-gray-700 dark:hover:bg-gray-800"
               onClick={handleLabelClick}
             >
               <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -334,34 +379,34 @@ function CardEditorModal({
                   <span className="text-sm text-gray-700 truncate dark:text-gray-200">{label || RIGHT_PANEL_LABELS.NONE}</span>
                 )}
               </div>
-              {!isEditingLabel && <i className="ti ti-chevron-down text-gray-400 text-xs shrink-0 dark:text-gray-500" />}
+              {!isEditingLabel && <i className="ti ti-pencil text-gray-400 text-xs shrink-0 dark:text-gray-500" />}
             </div>
           </div>
 
           {/* Priority (functional select) */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide dark:text-gray-400">{RIGHT_PANEL_LABELS.PRIORITY}</span>
-            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-1.5 dark:border-gray-700">
+            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 dark:border-gray-700">
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <i className={clsx("ti text-sm shrink-0", priority === "high" ? "ti-arrow-up text-red-500 dark:text-red-400" : "ti-minus text-gray-400 dark:text-gray-500")} />
                 <select
                   value={priority}
                   onChange={handlePriorityChange}
-                  className="border-0 bg-transparent text-sm text-gray-700 focus:outline-none cursor-pointer flex-1 min-w-0 dark:text-gray-200"
+                  className="appearance-none border-0 bg-transparent text-sm text-gray-700 focus:outline-none cursor-pointer flex-1 min-w-0 pr-5 dark:text-gray-200"
                 >
                   {PRIORITY_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
               </div>
-              <i className="ti ti-chevron-down text-gray-400 text-xs shrink-0 dark:text-gray-500" />
+              <i className="ti ti-chevron-down text-gray-400 text-xs shrink-0 pointer-events-none dark:text-gray-500" />
             </div>
           </div>
 
           {/* Due date (functional input) */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide dark:text-gray-400">{RIGHT_PANEL_LABELS.DUE_DATE}</span>
-            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-1.5 dark:border-gray-700">
+            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 dark:border-gray-700">
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <i className="ti ti-calendar text-gray-400 text-sm shrink-0 dark:text-gray-500" />
                 <input
@@ -371,43 +416,39 @@ function CardEditorModal({
                   className="border-0 bg-transparent text-sm text-gray-700 focus:outline-none cursor-pointer flex-1 min-w-0 w-full dark:text-gray-200"
                 />
               </div>
-              <i className="ti ti-chevron-down text-gray-400 text-xs shrink-0 dark:text-gray-500" />
             </div>
           </div>
 
           {/* Start date (static) */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide dark:text-gray-400">{RIGHT_PANEL_LABELS.START_DATE}</span>
-            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 cursor-pointer dark:border-gray-700 dark:hover:bg-gray-800">
+            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 dark:border-gray-700">
               <div className="flex items-center gap-2">
                 <i className="ti ti-calendar text-gray-400 text-sm dark:text-gray-500" />
                 <span className="text-sm text-gray-700 dark:text-gray-200">{RIGHT_PANEL_LABELS.NO_START_DATE}</span>
               </div>
-              <i className="ti ti-chevron-down text-gray-400 text-xs dark:text-gray-500" />
             </div>
           </div>
 
           {/* Parent card (static) */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide dark:text-gray-400">{RIGHT_PANEL_LABELS.PARENT_CARD}</span>
-            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 cursor-pointer dark:border-gray-700 dark:hover:bg-gray-800">
+            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 dark:border-gray-700">
               <div className="flex items-center gap-2">
                 <i className="ti ti-credit-card text-gray-400 text-sm dark:text-gray-500" />
                 <span className="text-sm text-gray-700 dark:text-gray-200">{RIGHT_PANEL_LABELS.NONE}</span>
               </div>
-              <i className="ti ti-chevron-down text-gray-400 text-xs dark:text-gray-500" />
             </div>
           </div>
 
           {/* Template (static) */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide dark:text-gray-400">{RIGHT_PANEL_LABELS.TEMPLATE}</span>
-            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 cursor-pointer dark:border-gray-700 dark:hover:bg-gray-800">
+            <div className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2 dark:border-gray-700">
               <div className="flex items-center gap-2">
                 <i className="ti ti-file text-gray-400 text-sm dark:text-gray-500" />
                 <span className="text-sm text-gray-700 dark:text-gray-200">{RIGHT_PANEL_LABELS.NONE}</span>
               </div>
-              <i className="ti ti-chevron-down text-gray-400 text-xs dark:text-gray-500" />
             </div>
           </div>
 

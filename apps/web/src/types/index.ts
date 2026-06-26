@@ -14,6 +14,7 @@ export type CardDraft = {
   label: string;
   priority: Card["priority"];
   due_date: string | null;
+  column_id?: string;
 };
 
 export interface BoardState {

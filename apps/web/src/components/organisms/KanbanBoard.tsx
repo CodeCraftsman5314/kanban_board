@@ -75,10 +75,11 @@ function KanbanBoard(): ReactElement {
 
   const handleSaveCard = (draft: CardDraft): void => {
     if (!activeEditor) return;
+    const targetColumnId = draft.column_id ?? activeEditor.columnId;
     if (activeEditor.card) {
       void editCard(activeEditor.card.id, draft);
     } else {
-      void addCard(activeEditor.columnId, draft);
+      void addCard(targetColumnId, draft);
     }
   };
 
@@ -175,6 +176,7 @@ function KanbanBoard(): ReactElement {
 
       <CardEditorModal
         isOpen={!!activeEditor}
+        columns={columns}
         columnId={activeEditor?.columnId ?? ""}
         columnTitle={columns.find((col) => col.id === activeEditor?.columnId)?.title ?? ""}
         card={activeEditor?.card ?? null}
