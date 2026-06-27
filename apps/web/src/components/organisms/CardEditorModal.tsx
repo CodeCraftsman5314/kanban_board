@@ -18,6 +18,7 @@ interface CardEditorModalProps {
   card: Card | null;
   onClose: () => void;
   onSave: (draft: CardDraft) => void;
+  onDelete?: () => void;
 }
 
 type DropdownField = "status" | "priority" | null;
@@ -122,6 +123,7 @@ function CardEditorModal({
   card,
   onClose,
   onSave,
+  onDelete,
 }: CardEditorModalProps): ReactElement {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -565,8 +567,14 @@ function CardEditorModal({
           <div className="shrink-0 flex items-center justify-between border-t border-gray-100 pt-6 dark:border-gray-800">
             <button
               type="button"
-              disabled
-              className="flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-500 opacity-70 dark:bg-red-500/10 dark:text-red-300"
+              onClick={onDelete}
+              disabled={!onDelete}
+              className={clsx(
+                "flex items-center gap-1.5 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-500 transition-colors duration-150 dark:bg-red-500/10 dark:text-red-300",
+                onDelete
+                  ? "cursor-pointer hover:bg-red-100 dark:hover:bg-red-500/20"
+                  : "cursor-not-allowed opacity-50"
+              )}
             >
               <i className="ti ti-trash text-sm" />
               {DELETE_CARD_LABEL}

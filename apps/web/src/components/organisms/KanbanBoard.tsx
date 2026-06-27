@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactElement } from "react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { clsx } from "clsx";
 
 import type { Card, CardDraft, ModalMode } from "@/types";
@@ -23,6 +23,8 @@ interface ActiveEditor {
 
 const BOARD_TITLE = "Team Board";
 const SEARCH_PLACEHOLDER = "Filter cards...";
+const SEARCH_RESULT_LABEL = (count: number): string =>
+  count === 1 ? "1 result" : `${count} results`;
 const NAV_TABS = ["Board", "Timeline", "Calendar", "List", "Files", "Dashboard"] as const;
 const ACTIVE_TAB = "Board" as const;
 const GROUP_LABEL = "Group: Status";
@@ -46,6 +48,26 @@ function KanbanBoard(): ReactElement {
   const { userCount } = usePresence();
 
   const [activeEditor, setActiveEditor] = useState<ActiveEditor | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredCards = useMemo(() => {
+    if (!searchQuery.trim()) return cards;
+    const q = searchQuery.toLowerCase().trim();
+    const result: typeof cards = {};
+    for (const columnId of Object.keys(cards)) {
+      result[columnId] = (cards[columnId] ?? []).filter(
+        (card) =>
+          card.title.toLowerCase().includes(q) ||
+          card.description?.toLowerCase().includes(q) ||
+          card.label?.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [cards, searchQuery]);
+
+  const totalMatches = searchQuery.trim()
+    ? Object.values(filteredCards).flat().length
+    : null;
 
   const handleAddCard = (columnId: string): void => {
     const columnTitle = columns.find((column) => column.id === columnId)?.title ?? "";
@@ -73,6 +95,13 @@ function KanbanBoard(): ReactElement {
 
   const handleCardDelete = (cardId: string): void => {
     void removeCard(cardId);
+  };
+
+  const handleDeleteActiveCard = (): void => {
+    if (!activeEditor?.card) return;
+    if (!window.confirm(LABELS.DELETE_CONFIRM)) return;
+    void removeCard(activeEditor.card.id);
+    handleCloseEditor();
   };
 
   const handleCardDrop = (cardId: string, targetColumnId: string): void => {
@@ -129,9 +158,30 @@ function KanbanBoard(): ReactElement {
 
         {/* Row 2: Search + Group/Sort */}
         <div className="flex items-center justify-between px-3 md:px-4 h-10 bg-white border-b border-gray-200 shrink-0 dark:bg-slate-900 dark:border-slate-800">
-          <div className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
-            <i className="ti ti-search text-gray-400 dark:text-gray-500" />
-            <span>{SEARCH_PLACEHOLDER}</span>
+          <div className="flex items-center gap-2">
+            <i className="ti ti-search text-sm text-gray-400 dark:text-gray-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={SEARCH_PLACEHOLDER}
+              className="w-48 bg-transparent text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none dark:text-gray-300 dark:placeholder:text-gray-500"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                aria-label="Clear search"
+                className="cursor-pointer text-gray-400 transition-colors hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+              >
+                <i className="ti ti-x text-xs" />
+              </button>
+            )}
+            {searchQuery && totalMatches !== null && (
+              <span className="whitespace-nowrap text-xs text-gray-400 dark:text-gray-500">
+                {SEARCH_RESULT_LABEL(totalMatches)}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <div className="hidden md:flex items-center gap-2">
@@ -161,7 +211,7 @@ function KanbanBoard(): ReactElement {
                 <KanbanColumn
                   key={column.id}
                   column={column}
-                  cards={cards[column.id] ?? []}
+                  cards={filteredCards[column.id] ?? []}
                   index={index}
                   onAddCard={handleAddCard}
                   onCardClick={handleCardClick}
@@ -184,6 +234,7 @@ function KanbanBoard(): ReactElement {
         card={activeEditor?.card ?? null}
         onClose={handleCloseEditor}
         onSave={handleSaveCard}
+        onDelete={activeEditor?.card ? handleDeleteActiveCard : undefined}
       />
     </div>
   );
