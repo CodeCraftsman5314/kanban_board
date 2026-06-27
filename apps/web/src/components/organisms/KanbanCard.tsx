@@ -18,7 +18,7 @@ const CARD_KIND_LABEL = "Task";
 const CARD_DESCRIPTION_FALLBACK = "No description added yet.";
 const CARD_META_DEFAULT = "None";
 const CARD_DATE_LOCALE = "en";
-const MIN_CARD_ORDER = 0;
+const MIN_CARD_ORDER = 1;
 
 function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElement {
   const [isDragging, setIsDragging] = useState(false);
@@ -46,7 +46,7 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
 
   const hasPriority = card.priority !== "none";
   const subtaskCount = card.subtasks?.length ?? 0;
-  const cardCode = `${CARD_CODE_PREFIX}-${Math.max(card.order, MIN_CARD_ORDER) + 1}`;
+  const cardCode = `${CARD_CODE_PREFIX}-${Math.max(card.order, MIN_CARD_ORDER)}`;
   const labelText = card.label || CARD_KIND_LABEL;
   const priorityText = hasPriority ? PRIORITY_LABELS[card.priority] : CARD_META_DEFAULT;
   const dueDateText = card.due_date

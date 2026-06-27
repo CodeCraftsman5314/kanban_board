@@ -34,6 +34,13 @@ const COLUMN_DOT_COLORS = [
   "bg-purple-500",
 ] as const;
 
+const COLUMN_BUTTON_COLORS = [
+  "border-blue-400/60 text-blue-600 hover:bg-blue-50 hover:border-blue-500 dark:border-blue-500/40 dark:text-blue-400 dark:hover:bg-blue-500/10 dark:hover:border-blue-400/70",
+  "border-amber-400/60 text-amber-600 hover:bg-amber-50 hover:border-amber-500 dark:border-amber-500/40 dark:text-amber-400 dark:hover:bg-amber-500/10 dark:hover:border-amber-400/70",
+  "border-green-400/60 text-green-600 hover:bg-green-50 hover:border-green-500 dark:border-green-500/40 dark:text-green-400 dark:hover:bg-green-500/10 dark:hover:border-green-400/70",
+  "border-purple-400/60 text-purple-600 hover:bg-purple-50 hover:border-purple-500 dark:border-purple-500/40 dark:text-purple-400 dark:hover:bg-purple-500/10 dark:hover:border-purple-400/70",
+] as const;
+
 const DRAG_OVER_CARD_AREA_CLASSES =
   "bg-blue-50 border-2 border-blue-300 border-dashed rounded-lg";
 const DEFAULT_CARD_AREA_CLASSES =
@@ -123,13 +130,19 @@ function KanbanColumn({
           </>
         )}
       </div>
-      <button
-        type="button"
-        onClick={handleAddCard}
-        className="w-full cursor-pointer border-t border-gray-200 px-4 py-3 text-left text-sm text-gray-500 transition-colors duration-150 hover:bg-white hover:text-gray-700 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100"
-      >
-        {LABELS.ADD_CARD}
-      </button>
+      <div className="px-3 pb-3 pt-1">
+        <button
+          type="button"
+          onClick={handleAddCard}
+          className={clsx(
+            "flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-medium transition-all duration-150",
+            COLUMN_BUTTON_COLORS[accentIndex]
+          )}
+        >
+          <i className="ti ti-plus text-base" />
+          {LABELS.ADD_CARD}
+        </button>
+      </div>
     </div>
   );
 }
