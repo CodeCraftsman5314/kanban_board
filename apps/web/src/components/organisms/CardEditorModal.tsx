@@ -306,7 +306,7 @@ function CardEditorModal({
     columns.find((column) => column.id === selectedColumnId)?.title ??
     columnTitle ??
     EMPTY_OPTION_LABEL;
-  const viewCardCode = `${CARD_CODE_PREFIX}-${Math.max(card?.order ?? MIN_CARD_ORDER, MIN_CARD_ORDER) + 1}`;
+  const viewCardCode = `${CARD_CODE_PREFIX}-${Math.max(card?.order ?? MIN_CARD_ORDER, MIN_CARD_ORDER)}`;
   const viewLabel = label || CARD_KIND_LABEL;
 
   if (isViewMode) {

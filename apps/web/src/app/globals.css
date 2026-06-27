@@ -7,6 +7,14 @@
   --animate-shimmer: shimmer 1.6s ease-in-out infinite;
 }
 
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 html,
 body {
   background: #f3f4f6;

@@ -99,7 +99,6 @@ function KanbanBoard(): ReactElement {
 
   const handleDeleteActiveCard = (): void => {
     if (!activeEditor?.card) return;
-    if (!window.confirm(LABELS.DELETE_CONFIRM)) return;
     void removeCard(activeEditor.card.id);
     handleCloseEditor();
   };

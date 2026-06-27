@@ -39,9 +39,7 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
 
   const handleDelete = (event: MouseEvent<HTMLButtonElement>): void => {
     event.stopPropagation();
-    if (window.confirm(LABELS.DELETE_CONFIRM)) {
-      onDelete(card.id);
-    }
+    onDelete(card.id);
   };
 
   const hasPriority = card.priority !== "none";
