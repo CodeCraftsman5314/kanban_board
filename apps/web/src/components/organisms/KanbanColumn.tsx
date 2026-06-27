@@ -6,6 +6,7 @@ import { clsx } from "clsx";
 
 import type { Card, Column } from "@/types";
 import { LABELS } from "@/constants";
+import CreatingCard from "@/components/organisms/CreatingCard";
 import KanbanCard from "@/components/organisms/KanbanCard";
 
 interface KanbanColumnProps {
@@ -16,6 +17,7 @@ interface KanbanColumnProps {
   onCardClick: (card: Card) => void;
   onCardDelete: (cardId: string) => void;
   onCardDrop: (cardId: string, targetColumnId: string) => void;
+  isCreating?: boolean;
 }
 
 const COLUMN_ACCENT_COLORS = [
@@ -45,6 +47,7 @@ function KanbanColumn({
   onCardClick,
   onCardDelete,
   onCardDrop,
+  isCreating = false,
 }: KanbanColumnProps): ReactElement {
   const [isDragOver, setIsDragOver] = useState(false);
   const accentIndex = index % COLUMN_ACCENT_COLORS.length;
@@ -89,7 +92,7 @@ function KanbanColumn({
         <div className="flex items-center gap-2">
           <span className={clsx("w-2.5 h-2.5 rounded-full shrink-0", COLUMN_DOT_COLORS[accentIndex])} />
           <span className="text-base font-semibold text-gray-800 dark:text-slate-100">{column.title}</span>
-          <span className="text-sm text-gray-500 font-normal dark:text-slate-400">{cards.length}</span>
+          <span className="text-sm text-gray-500 font-normal dark:text-slate-400">{cards.length + (isCreating ? 1 : 0)}</span>
         </div>
         <div className="flex items-center gap-1">
           <i className="ti ti-dots text-gray-400 hover:text-gray-600 cursor-pointer dark:text-slate-500 dark:hover:text-slate-200" />
@@ -102,19 +105,22 @@ function KanbanColumn({
           isDragOver && DRAG_OVER_CARD_AREA_CLASSES
         )}
       >
-        {cards.length === 0 ? (
+        {cards.length === 0 && !isCreating ? (
           <div className="flex-1 flex items-center justify-center p-4 text-sm text-gray-400 text-center dark:text-slate-500">
             {LABELS.EMPTY_COLUMN}
           </div>
         ) : (
-          cards.map((card) => (
-            <KanbanCard
-              key={card.id}
-              card={card}
-              onCardClick={onCardClick}
-              onDelete={onCardDelete}
-            />
-          ))
+          <>
+            {cards.map((card) => (
+              <KanbanCard
+                key={card.id}
+                card={card}
+                onCardClick={onCardClick}
+                onDelete={onCardDelete}
+              />
+            ))}
+            {isCreating && <CreatingCard />}
+          </>
         )}
       </div>
       <button

@@ -7,11 +7,11 @@ import { clsx } from "clsx";
 import type { Card, CardDraft, ModalMode } from "@/types";
 import { LABELS } from "@/constants";
 import { useBoard } from "@/hooks";
-import { Spinner } from "@/components/atoms";
 import { ConnectionBadge } from "@/components/molecules";
 import CardEditorModal from "@/components/organisms/CardEditorModal";
 import KanbanColumn from "@/components/organisms/KanbanColumn";
 import Sidebar from "@/components/organisms/Sidebar";
+import SkeletonColumn from "@/components/organisms/SkeletonColumn";
 import ThemeToggle from "@/components/organisms/ThemeToggle";
 
 interface ActiveEditor {
@@ -36,6 +36,7 @@ function KanbanBoard(): ReactElement {
     isLoading,
     error,
     connectionStatus,
+    creatingInColumn,
     addCard,
     editCard,
     removeCard,
@@ -43,25 +44,6 @@ function KanbanBoard(): ReactElement {
   } = useBoard();
 
   const [activeEditor, setActiveEditor] = useState<ActiveEditor | null>(null);
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-slate-900">
-        <div className="flex flex-col items-center gap-3">
-          <Spinner size="lg" />
-          <p className="text-sm text-gray-500 dark:text-gray-400">{LABELS.LOADING}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-slate-900">
-        <p className="text-sm text-red-500 dark:text-red-400">{LABELS.ERROR_LOADING}</p>
-      </div>
-    );
-  }
 
   const handleAddCard = (columnId: string): void => {
     const columnTitle = columns.find((column) => column.id === columnId)?.title ?? "";
@@ -164,18 +146,29 @@ function KanbanBoard(): ReactElement {
         {/* Board columns */}
         <div className="flex-1 overflow-x-auto overflow-y-hidden bg-gray-100 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-gray-900">
           <div className="flex gap-3 md:gap-4 px-3 py-3 md:px-6 md:py-6 h-full items-start min-w-max">
-            {columns.map((column, index) => (
-              <KanbanColumn
-                key={column.id}
-                column={column}
-                cards={cards[column.id] ?? []}
-                index={index}
-                onAddCard={handleAddCard}
-                onCardClick={handleCardClick}
-                onCardDelete={handleCardDelete}
-                onCardDrop={handleCardDrop}
-              />
-            ))}
+            {isLoading ? (
+              [2, 3, 1].map((cardCount, i) => (
+                <SkeletonColumn key={i} index={i} cardCount={cardCount} />
+              ))
+            ) : error ? (
+              <div className="flex w-full items-center justify-center py-24">
+                <p className="text-sm text-red-500 dark:text-red-400">{LABELS.ERROR_LOADING}</p>
+              </div>
+            ) : (
+              columns.map((column, index) => (
+                <KanbanColumn
+                  key={column.id}
+                  column={column}
+                  cards={cards[column.id] ?? []}
+                  index={index}
+                  onAddCard={handleAddCard}
+                  onCardClick={handleCardClick}
+                  onCardDelete={handleCardDelete}
+                  onCardDrop={handleCardDrop}
+                  isCreating={creatingInColumn === column.id}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { BoardState, Card, CardDraft, Column, ConnectionStatus } from "@/types";
 import { LABELS } from "@/constants";
@@ -16,6 +16,7 @@ import {
 
 interface UseBoardResult extends BoardState {
   connectionStatus: ConnectionStatus;
+  creatingInColumn: string | null;
   refreshBoard: () => Promise<void>;
   addCard: (columnId: string, draft: CardDraft) => Promise<boolean>;
   editCard: (cardId: string, draft: CardDraft) => Promise<boolean>;
@@ -49,13 +50,17 @@ function useBoard(): UseBoardResult {
   const [boardState, setBoardState] = useState<BoardState>(INITIAL_BOARD_STATE);
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>("connected");
+  const [creatingInColumn, setCreatingInColumn] = useState<string | null>(null);
+  const isFirstLoad = useRef(true);
 
   const refreshBoard = useCallback(async (): Promise<void> => {
-    setBoardState((currentState) => ({
-      ...currentState,
-      isLoading: true,
-      error: null,
-    }));
+    if (isFirstLoad.current) {
+      setBoardState((currentState) => ({
+        ...currentState,
+        isLoading: true,
+        error: null,
+      }));
+    }
 
     const [columnsResult, cardsResult] = await Promise.all([
       fetchColumns(),
@@ -80,6 +85,7 @@ function useBoard(): UseBoardResult {
       return;
     }
 
+    isFirstLoad.current = false;
     setBoardState({
       columns: columnsResult.data,
       cards: groupCardsByColumn(columnsResult.data, cardsResult.data),
@@ -113,6 +119,7 @@ function useBoard(): UseBoardResult {
 
   const addCard = useCallback(
     async (columnId: string, draft: CardDraft): Promise<boolean> => {
+      setCreatingInColumn(columnId);
       const columnCards = boardState.cards[columnId] ?? [];
       const result = await createCard({
         column_id: columnId,
@@ -126,6 +133,7 @@ function useBoard(): UseBoardResult {
       });
 
       if (result.error) {
+        setCreatingInColumn(null);
         setBoardState((currentState) => ({
           ...currentState,
           error: result.error,
@@ -134,6 +142,7 @@ function useBoard(): UseBoardResult {
       }
 
       await refreshBoard();
+      setCreatingInColumn(null);
       return true;
     },
     [boardState.cards, refreshBoard]
@@ -227,6 +236,7 @@ function useBoard(): UseBoardResult {
   return {
     ...boardState,
     connectionStatus,
+    creatingInColumn,
     refreshBoard,
     addCard,
     editCard,
