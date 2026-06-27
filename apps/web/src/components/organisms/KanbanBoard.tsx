@@ -6,7 +6,7 @@ import { clsx } from "clsx";
 
 import type { Card, CardDraft, ModalMode } from "@/types";
 import { LABELS } from "@/constants";
-import { useBoard } from "@/hooks";
+import { useBoard, usePresence } from "@/hooks";
 import { ConnectionBadge } from "@/components/molecules";
 import CardEditorModal from "@/components/organisms/CardEditorModal";
 import KanbanColumn from "@/components/organisms/KanbanColumn";
@@ -42,6 +42,8 @@ function KanbanBoard(): ReactElement {
     removeCard,
     moveCardToColumn,
   } = useBoard();
+
+  const { userCount } = usePresence();
 
   const [activeEditor, setActiveEditor] = useState<ActiveEditor | null>(null);
 
@@ -101,7 +103,7 @@ function KanbanBoard(): ReactElement {
               <span className="ml-1.5 text-xs text-gray-500 font-medium dark:text-gray-400">{AVATAR_OVERFLOW}</span>
             </div>
             <span className="hidden md:block w-px h-5 bg-gray-200 mx-3 dark:bg-slate-800" />
-            <ConnectionBadge status={connectionStatus} userCount={1} />
+            <ConnectionBadge status={connectionStatus} userCount={userCount} />
             <span className="ml-2">
               <ThemeToggle />
             </span>
