@@ -6,12 +6,11 @@ const CREATING_CARD_LABEL = "Creating card…";
 
 function CreatingCard(): ReactElement {
   return (
-    <div className="animate-fade-in relative min-h-40 overflow-hidden rounded-xl border-2 border-dashed border-blue-300 bg-white p-4 pl-7 dark:border-blue-500/40 dark:bg-slate-900">
-      {/* Left accent bar */}
+    <div className="animate-card-placeholder relative min-h-40 overflow-hidden rounded-xl border-2 border-dashed border-blue-300 bg-white p-4 pl-7 shadow-md shadow-blue-100/70 dark:border-blue-500/40 dark:bg-slate-900 dark:shadow-blue-950/30">
+      <span className="absolute inset-0 animate-card-sheen bg-gradient-to-r from-transparent via-blue-100/60 to-transparent dark:via-blue-400/10" />
       <span className="absolute bottom-4 left-4 top-4 w-1 rounded-full bg-blue-300 dark:bg-blue-600/50" />
 
-      {/* Status indicator */}
-      <div className="flex items-center gap-2">
+      <div className="relative flex items-center gap-2">
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -24,20 +23,17 @@ function CreatingCard(): ReactElement {
         <span className="text-sm font-medium text-blue-500 dark:text-blue-400">{CREATING_CARD_LABEL}</span>
       </div>
 
-      {/* Skeleton title */}
-      <div className="mt-4 space-y-2">
+      <div className="relative mt-4 space-y-2">
         <div className="skeleton h-5 w-3/4" />
         <div className="skeleton h-5 w-1/2" />
       </div>
 
-      {/* Skeleton description */}
-      <div className="mt-2 space-y-1.5">
+      <div className="relative mt-2 space-y-1.5">
         <div className="skeleton h-3.5 w-full opacity-60" />
         <div className="skeleton h-3.5 w-2/3 opacity-60" />
       </div>
 
-      {/* Skeleton meta */}
-      <div className="mt-4 flex items-center gap-3">
+      <div className="relative mt-4 flex items-center gap-3">
         <div className="skeleton h-4 w-16 opacity-60" />
         <div className="h-4 w-px bg-gray-200 dark:bg-slate-700" />
         <div className="skeleton h-4 w-12 opacity-60" />

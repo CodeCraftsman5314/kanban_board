@@ -18,6 +18,7 @@ interface KanbanColumnProps {
   onCardDelete: (cardId: string) => void;
   onCardDrop: (cardId: string, targetColumnId: string) => void;
   isCreating?: boolean;
+  animatingCardId: string | null;
 }
 
 const COLUMN_ACCENT_COLORS = [
@@ -45,6 +46,7 @@ const DRAG_OVER_CARD_AREA_CLASSES =
   "bg-blue-50 border-2 border-blue-300 border-dashed rounded-lg";
 const DEFAULT_CARD_AREA_CLASSES =
   "flex-1 overflow-y-auto px-2 py-2 flex flex-col gap-2";
+const COLUMN_MENU_LABEL = "Column options";
 
 function KanbanColumn({
   column,
@@ -55,6 +57,7 @@ function KanbanColumn({
   onCardDelete,
   onCardDrop,
   isCreating = false,
+  animatingCardId,
 }: KanbanColumnProps): ReactElement {
   const [isDragOver, setIsDragOver] = useState(false);
   const accentIndex = index % COLUMN_ACCENT_COLORS.length;
@@ -101,9 +104,14 @@ function KanbanColumn({
           <span className="text-base font-semibold text-gray-800 dark:text-slate-100">{column.title}</span>
           <span className="text-sm text-gray-500 font-normal dark:text-slate-400">{cards.length + (isCreating ? 1 : 0)}</span>
         </div>
-        <div className="flex items-center gap-1">
-          <i className="ti ti-dots text-gray-400 hover:text-gray-600 cursor-pointer dark:text-slate-500 dark:hover:text-slate-200" />
-        </div>
+        <button
+          type="button"
+          aria-label={COLUMN_MENU_LABEL}
+          disabled
+          className="flex h-7 w-7 cursor-not-allowed items-center justify-center rounded text-gray-400 opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-slate-500"
+        >
+          <i className="ti ti-dots" />
+        </button>
       </div>
       <div
         className={clsx(
@@ -124,6 +132,7 @@ function KanbanColumn({
                 card={card}
                 onCardClick={onCardClick}
                 onDelete={onCardDelete}
+                isAnimating={animatingCardId === card.id}
               />
             ))}
             {isCreating && <CreatingCard />}
@@ -135,7 +144,7 @@ function KanbanColumn({
           type="button"
           onClick={handleAddCard}
           className={clsx(
-            "flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-medium transition-all duration-150",
+            "flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
             COLUMN_BUTTON_COLORS[accentIndex]
           )}
         >

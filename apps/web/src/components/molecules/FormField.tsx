@@ -14,6 +14,7 @@ interface FormFieldProps {
   isRequired?: boolean;
   maxLength?: number;
   multiline?: boolean;
+  multilineRows?: number;
   autoFocus?: boolean;
   onKeyDown?: (e: ReactKeyboardEvent) => void;
   className?: string;
@@ -44,6 +45,7 @@ function FormField({
   isRequired = false,
   maxLength,
   multiline = false,
+  multilineRows,
   autoFocus = false,
   onKeyDown,
   className,
@@ -88,6 +90,7 @@ function FormField({
           placeholder={placeholder}
           required={isRequired}
           maxLength={maxLength}
+          rows={multilineRows}
           onKeyDown={onKeyDown}
           onChange={handleChange}
           className={clsx(BASE_INPUT_CLASSES, borderClass)}

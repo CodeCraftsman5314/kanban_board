@@ -1,6 +1,6 @@
 "use client";
 
-import type { DragEvent, MouseEvent, ReactElement } from "react";
+import type { DragEvent, KeyboardEvent, MouseEvent, ReactElement } from "react";
 import { useState } from "react";
 import { clsx } from "clsx";
 
@@ -11,6 +11,7 @@ interface KanbanCardProps {
   card: Card;
   onCardClick: (card: Card) => void;
   onDelete: (cardId: string) => void;
+  isAnimating?: boolean;
 }
 
 const CARD_CODE_PREFIX = "TO";
@@ -19,8 +20,16 @@ const CARD_DESCRIPTION_FALLBACK = "No description added yet.";
 const CARD_META_DEFAULT = "None";
 const CARD_DATE_LOCALE = "en";
 const MIN_CARD_ORDER = 1;
+const ENTER_KEY = "Enter" as const;
+const SPACE_KEY = " " as const;
+const OPEN_CARD_LABEL = "Open card";
 
-function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElement {
+function KanbanCard({
+  card,
+  onCardClick,
+  onDelete,
+  isAnimating = false,
+}: KanbanCardProps): ReactElement {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragStart = (event: DragEvent<HTMLDivElement>): void => {
@@ -34,6 +43,12 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
   };
 
   const handleClick = (): void => {
+    onCardClick(card);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key !== ENTER_KEY && event.key !== SPACE_KEY) return;
+    event.preventDefault();
     onCardClick(card);
   };
 
@@ -57,8 +72,13 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`${OPEN_CARD_LABEL}: ${card.title}`}
       className={clsx(
-        "group relative z-10 min-h-40 select-none overflow-hidden rounded-xl border border-gray-200 bg-white p-4 pl-7 shadow-md shadow-gray-200/70 ring-1 ring-white transition-all duration-150 hover:z-20 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100 dark:border-slate-700 dark:bg-slate-900 dark:shadow-lg dark:shadow-black/25 dark:ring-white/5 dark:hover:border-blue-500/40 dark:hover:bg-slate-800 dark:hover:shadow-black/40",
+        "group relative z-10 min-h-40 select-none overflow-hidden rounded-xl border border-gray-200 bg-white p-4 pl-7 shadow-md shadow-gray-200/70 ring-1 ring-white transition-all duration-150 hover:z-20 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:shadow-lg dark:shadow-black/25 dark:ring-white/5 dark:hover:border-blue-500/40 dark:hover:bg-slate-800 dark:hover:shadow-black/40",
+        isAnimating && "animate-card-settle border-blue-300 shadow-blue-100 dark:border-blue-500/60 dark:shadow-blue-950/40",
         isDragging ? "cursor-grabbing opacity-50" : "cursor-grab"
       )}
     >

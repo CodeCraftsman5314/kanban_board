@@ -50,95 +50,88 @@ A real-time collaborative Kanban board built with Next.js, Supabase, and TypeScr
 
 The project is a Turborepo monorepo with one application (`apps/web`) and a shared types package (`packages/types`). All TypeScript interfaces — `Column`, `Card`, `Priority`, and the `Database` schema type — live in `packages/types` and are consumed by the web app.
 
-Inside the app, concerns are layered: `kanban.service.ts` handles all raw Supabase calls, `useBoard` and `usePresence` wrap those calls in React state and subscriptions, and components only talk to hooks — never to the service layer directly. This keeps data-fetching logic easy to test and replace independently of the UI.
+Inside the app, concerns are layered: service files handle raw Supabase calls, `useBoard` and `usePresence` wrap those calls in React state and subscriptions, and components only talk to hooks - never to the service layer directly. This keeps data-fetching logic easy to test and replace independently of the UI.
 
 ---
 
 ## Getting Started
 
+Fresh setup is:
+
+```bash
+pnpm install
+cp apps/web/.env.example apps/web/.env.local
+supabase login
+supabase link --project-ref <PROJECT_REF>
+pnpm db:push
+pnpm dev
+```
+
 ### Prerequisites
 
 - Node.js 18+
 - pnpm (`npm install -g pnpm`)
+- Supabase CLI (`npm install -g supabase`)
 - A Supabase project (free tier works)
 
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/CodeCraftsman5314/kanban_board
-cd kanban-board
-```
-
-### 2. Install dependencies
+### 1. Install dependencies
 
 ```bash
 pnpm install
 ```
 
-### 3. Set up Supabase
-
-Create a project at [supabase.com](https://supabase.com), then run the following SQL in the Supabase SQL Editor:
-
-```sql
--- Create columns table
-create table public.columns (
-  id uuid primary key default gen_random_uuid(),
-  title text not null,
-  "order" integer not null default 0,
-  created_at timestamptz not null default now()
-);
-
--- Create cards table
-create table public.cards (
-  id uuid primary key default gen_random_uuid(),
-  column_id uuid references public.columns(id) on delete cascade,
-  title text not null,
-  description text,
-  "order" integer not null default 0,
-  created_at timestamptz not null default now(),
-  label text,
-  priority text not null default 'none',
-  due_date date,
-  subtasks jsonb not null default '[]'::jsonb
-);
-
--- Enable Row Level Security
-alter table public.columns enable row level security;
-alter table public.cards enable row level security;
-
--- Allow public read/write (no auth required for this project)
-create policy "Public read columns" on public.columns for select using (true);
-create policy "Public write columns" on public.columns for all using (true);
-create policy "Public read cards" on public.cards for select using (true);
-create policy "Public write cards" on public.cards for all using (true);
-
--- Enable Realtime
-alter publication supabase_realtime add table public.columns;
-alter publication supabase_realtime add table public.cards;
-
--- Seed default columns
-insert into public.columns (title, "order") values
-  ('To Do', 0),
-  ('In Progress', 1),
-  ('Done', 2);
-```
-
-### 4. Configure environment variables
+### 2. Configure environment variables
 
 ```bash
 cp apps/web/.env.example apps/web/.env.local
 ```
 
-Fill in your Supabase project URL and anon key from:
-**Supabase Dashboard → Settings → API**
+Fill in:
 
-### 5. Run the development server
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+Both values are available in **Supabase Dashboard -> Project Settings -> API**.
+
+### 3. Link Supabase and apply migrations
+
+Create a project at [supabase.com](https://supabase.com), then link this repository to it:
+
+```bash
+supabase login
+supabase link --project-ref <PROJECT_REF>
+pnpm db:push
+```
+
+Find `<PROJECT_REF>` in the Supabase Dashboard URL:
+
+```text
+https://supabase.com/dashboard/project/<PROJECT_REF>
+```
+
+`pnpm db:push` applies the SQL migrations in `supabase/migrations` to the linked project. The initial migration creates the Kanban tables, constraints, RLS policies, Realtime publication entries, and default columns.
+
+### 4. Run the development server
 
 ```bash
 pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### Useful database commands
+
+```bash
+pnpm db:push
+pnpm db:reset
+pnpm db:types
+```
+
+- `pnpm db:push` applies local migrations to the linked Supabase project.
+- `pnpm db:reset` resets a local Supabase database from migrations. This requires Docker and a local `supabase start` workflow.
+- `pnpm db:types` regenerates Supabase database types from the linked project into `packages/types/src/database.types.ts`. Review the generated output before replacing the hand-curated shared types in `packages/types/src/index.ts`.
+
+New schema changes should be added as timestamped SQL files in `supabase/migrations`. Do not edit migrations that have already been pushed to a shared Supabase project; create a new migration instead.
 
 ---
 
@@ -167,11 +160,14 @@ kanban-board/
 │           │   ├── molecules/  # ConnectionBadge, Modal, FormField
 │           │   └── organisms/  # KanbanBoard, KanbanColumn, KanbanCard
 │           ├── hooks/          # useBoard, usePresence
-│           ├── services/       # kanban.service.ts (Supabase calls)
+│           ├── services/       # Supabase service layer
 │           ├── types/          # Local TypeScript types
 │           └── constants/      # App-wide string constants
-└── packages/
-    └── types/                  # Shared types across packages
+├── packages/
+│   └── types/                  # Shared app and database types
+└── supabase/
+    ├── config.toml             # Supabase CLI project config
+    └── migrations/             # Reproducible database schema
 ```
 
 ---

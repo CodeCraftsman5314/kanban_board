@@ -1,22 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 
-import type { BoardState, Card, CardDraft, Column, ConnectionStatus } from "@/types";
-import { LABELS } from "@/constants";
-import {
-  createCard,
-  deleteCard,
-  fetchCards,
-  fetchColumns,
-  moveCard,
-  subscribeToBoardChanges,
-  updateCard,
-} from "@/services";
+import type { BoardState, CardDraft, ConnectionStatus } from "@/types";
+import { subscribeToBoardChanges } from "@/services";
+import useBoardCards from "./useBoardCards";
+import useBoardState from "./useBoardState";
 
 interface UseBoardResult extends BoardState {
   connectionStatus: ConnectionStatus;
   creatingInColumn: string | null;
+  animatingCardId: string | null;
   refreshBoard: () => Promise<void>;
   addCard: (columnId: string, draft: CardDraft) => Promise<boolean>;
   editCard: (cardId: string, draft: CardDraft) => Promise<boolean>;
@@ -24,76 +18,22 @@ interface UseBoardResult extends BoardState {
   moveCardToColumn: (cardId: string, targetColumnId: string) => Promise<boolean>;
 }
 
-const INITIAL_BOARD_STATE: BoardState = {
-  columns: [],
-  cards: {},
-  isLoading: true,
-  error: null,
-};
-
-const FIRST_ORDER = 1;
-
-const groupCardsByColumn = (
-  columns: Column[],
-  cards: Card[]
-): Record<string, Card[]> =>
-  columns.reduce<Record<string, Card[]>>((accumulator, column) => {
-    accumulator[column.id] = cards.filter((card) => card.column_id === column.id);
-    return accumulator;
-  }, {});
-
-const getNextOrder = (cards: Card[]): number =>
-  cards.reduce((highestOrder, card) => Math.max(highestOrder, card.order), 0) +
-  FIRST_ORDER;
-
 function useBoard(): UseBoardResult {
-  const [boardState, setBoardState] = useState<BoardState>(INITIAL_BOARD_STATE);
-  const [connectionStatus, setConnectionStatus] =
-    useState<ConnectionStatus>("connected");
-  const [creatingInColumn, setCreatingInColumn] = useState<string | null>(null);
-  const isFirstLoad = useRef(true);
-
-  const refreshBoard = useCallback(async (): Promise<void> => {
-    if (isFirstLoad.current) {
-      setBoardState((currentState) => ({
-        ...currentState,
-        isLoading: true,
-        error: null,
-      }));
-    }
-
-    const [columnsResult, cardsResult] = await Promise.all([
-      fetchColumns(),
-      fetchCards(),
-    ]);
-
-    if (columnsResult.error || cardsResult.error) {
-      setBoardState((currentState) => ({
-        ...currentState,
-        isLoading: false,
-        error: columnsResult.error ?? cardsResult.error ?? LABELS.ERROR_LOADING,
-      }));
-      return;
-    }
-
-    if (!columnsResult.data || !cardsResult.data) {
-      setBoardState((currentState) => ({
-        ...currentState,
-        isLoading: false,
-        error: LABELS.ERROR_LOADING,
-      }));
-      return;
-    }
-
-    isFirstLoad.current = false;
-    setBoardState({
-      columns: columnsResult.data,
-      cards: groupCardsByColumn(columnsResult.data, cardsResult.data),
-      isLoading: false,
-      error: null,
-    });
-    setConnectionStatus("connected");
-  }, []);
+  const {
+    boardState,
+    setBoardState,
+    connectionStatus,
+    setConnectionStatus,
+    refreshBoard,
+  } = useBoardState();
+  const {
+    creatingInColumn,
+    animatingCardId,
+    addCard,
+    editCard,
+    removeCard,
+    moveCardToColumn,
+  } = useBoardCards({ boardState, setBoardState, refreshBoard });
 
   useEffect(() => {
     void refreshBoard();
@@ -115,128 +55,13 @@ function useBoard(): UseBoardResult {
     return () => {
       subscription.unsubscribe();
     };
-  }, [refreshBoard]);
-
-  const addCard = useCallback(
-    async (columnId: string, draft: CardDraft): Promise<boolean> => {
-      setCreatingInColumn(columnId);
-      const columnCards = boardState.cards[columnId] ?? [];
-      const result = await createCard({
-        column_id: columnId,
-        title: draft.title,
-        description: draft.description,
-        label: draft.label,
-        priority: draft.priority,
-        due_date: draft.due_date,
-        subtasks: draft.subtasks,
-        order: getNextOrder(columnCards),
-      });
-
-      if (result.error) {
-        setCreatingInColumn(null);
-        setBoardState((currentState) => ({
-          ...currentState,
-          error: result.error,
-        }));
-        return false;
-      }
-
-      await refreshBoard();
-      setCreatingInColumn(null);
-      return true;
-    },
-    [boardState.cards, refreshBoard]
-  );
-
-  const editCard = useCallback(
-    async (cardId: string, draft: CardDraft): Promise<boolean> => {
-      const result = await updateCard(cardId, draft);
-
-      if (result.error) {
-        setBoardState((currentState) => ({
-          ...currentState,
-          error: result.error,
-        }));
-        return false;
-      }
-
-      await refreshBoard();
-      return true;
-    },
-    [refreshBoard]
-  );
-
-  const removeCard = useCallback(
-    async (cardId: string): Promise<boolean> => {
-      const result = await deleteCard(cardId);
-
-      if (result.error) {
-        setBoardState((currentState) => ({
-          ...currentState,
-          error: result.error,
-        }));
-        return false;
-      }
-
-      await refreshBoard();
-      return true;
-    },
-    [refreshBoard]
-  );
-
-  const moveCardToColumn = useCallback(
-    async (cardId: string, targetColumnId: string): Promise<boolean> => {
-      const cardToMove = Object.values(boardState.cards)
-        .flat()
-        .find((card) => card.id === cardId);
-
-      if (!cardToMove) return false;
-      if (cardToMove.column_id === targetColumnId) return true;
-
-      const targetCards = boardState.cards[targetColumnId] ?? [];
-      const nextOrder = getNextOrder(targetCards);
-
-      setBoardState((currentState) => {
-        const currentSourceCards = currentState.cards[cardToMove.column_id] ?? [];
-        const currentTargetCards = currentState.cards[targetColumnId] ?? [];
-
-        return {
-          ...currentState,
-          cards: {
-            ...currentState.cards,
-            [cardToMove.column_id]: currentSourceCards.filter((card) => card.id !== cardId),
-            [targetColumnId]: [
-              ...currentTargetCards,
-              { ...cardToMove, column_id: targetColumnId, order: nextOrder },
-            ],
-          },
-        };
-      });
-
-      const result = await moveCard({
-        cardId,
-        targetColumnId,
-        newOrder: nextOrder,
-      });
-
-      if (result.error) {
-        setBoardState((currentState) => ({
-          ...currentState,
-          error: result.error,
-        }));
-        await refreshBoard();
-        return false;
-      }
-
-      return true;
-    },
-    [boardState.cards, refreshBoard]
-  );
+  }, [refreshBoard, setBoardState, setConnectionStatus]);
 
   return {
     ...boardState,
     connectionStatus,
     creatingInColumn,
+    animatingCardId,
     refreshBoard,
     addCard,
     editCard,

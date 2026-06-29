@@ -10,6 +10,9 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
+    "db:push": "supabase db push",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript --linked --schema public > packages/types/src/database.types.ts",
     "format": "prettier --write \"**/*.{ts,tsx,json,md,css}\" --ignore-path .gitignore"
   },
   "devDependencies": {
