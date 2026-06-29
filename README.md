@@ -56,7 +56,125 @@ Inside the app, concerns are layered: service files handle raw Supabase calls, `
 
 ## Getting Started
 
-Fresh setup is:
+Follow these steps in order. If one command fails, stop there and fix it before moving to the next step.
+
+### What you need first
+
+Install these once on your computer:
+
+1. **Node.js 22.13 or newer**
+
+   Check your version:
+
+   ```bash
+   node -v
+   ```
+
+2. **pnpm 11**
+
+   If `pnpm -v` does not work, install pnpm with Corepack:
+
+   ```bash
+   corepack enable
+   corepack prepare pnpm@11.9.0 --activate
+   pnpm -v
+   ```
+
+3. **Supabase CLI**
+
+   If `supabase -v` does not work, install the Supabase CLI:
+
+   ```bash
+   npm install -g supabase
+   supabase -v
+   ```
+
+4. **A Supabase account and project**
+
+   Create a free project at [supabase.com](https://supabase.com). Keep the dashboard open because you will copy values from it in the next steps.
+
+### 1. Install project packages
+
+```bash
+pnpm install
+```
+
+This installs the web app dependencies, shared workspace packages, and tooling used by Turborepo.
+
+### 2. Create the local environment file
+
+```bash
+cp apps/web/.env.example apps/web/.env.local
+```
+
+Open `apps/web/.env.local` and fill in these two values:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+Find them in **Supabase Dashboard -> Project Settings -> API**.
+
+Your file should look like this:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Do not commit `.env.local`. It is only for your computer.
+
+### 3. Link Supabase and apply migrations
+
+Log in to Supabase from the terminal:
+
+```bash
+supabase login
+```
+
+Find your project ref in the Supabase Dashboard URL:
+
+```text
+https://supabase.com/dashboard/project/<PROJECT_REF>
+```
+
+Link this repository to your Supabase project:
+
+```bash
+supabase link --project-ref <PROJECT_REF>
+```
+
+This stores the project link locally so future database commands know which Supabase project to use.
+
+Now create the database tables, policies, Realtime setup, and default columns:
+
+```bash
+pnpm db:push
+```
+
+This runs the SQL files in `supabase/migrations`. After this step, Supabase has the `columns` and `cards` tables that the app reads from.
+
+### 4. Run the app
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+If the board loads, setup worked. If it does not, check that `.env.local` has the correct Supabase URL and anon key, then restart `pnpm dev`.
+
+### Setup Checklist
+
+- `node -v` shows version `22.13` or newer.
+- `pnpm -v` works.
+- `supabase -v` works.
+- `apps/web/.env.local` contains your Supabase URL and anon key.
+- `pnpm db:push` finishes without errors.
+- `pnpm dev` starts the local app.
+
+### Quick Setup Command List
+
+Use this only after you understand the steps above:
 
 ```bash
 pnpm install
@@ -66,50 +184,6 @@ supabase link --project-ref <PROJECT_REF>
 pnpm db:push
 pnpm dev
 ```
-
-### Prerequisites
-
-- Node.js 22.13+
-- pnpm 11 (`corepack enable && corepack prepare pnpm@11.9.0 --activate`)
-- Supabase CLI (`npm install -g supabase`)
-- A Supabase project (free tier works)
-
-### 1. Install dependencies
-
-```bash
-pnpm install
-```
-
-### 2. Configure environment variables
-
-```bash
-cp apps/web/.env.example apps/web/.env.local
-```
-
-Fill in:
-
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-Both values are available in **Supabase Dashboard -> Project Settings -> API**.
-
-### 3. Link Supabase and apply migrations
-
-Create a project at [supabase.com](https://supabase.com), then link this repository to it:
-
-```bash
-supabase login
-supabase link --project-ref <PROJECT_REF>
-pnpm db:push
-```
-
-Find `<PROJECT_REF>` in the Supabase Dashboard URL:
-
-```text
-https://supabase.com/dashboard/project/<PROJECT_REF>
-```
-
-`pnpm db:push` applies the SQL migrations in `supabase/migrations` to the linked project. The initial migration creates the Kanban tables, constraints, RLS policies, Realtime publication entries, and default columns.
 
 #### Useful Supabase Docs
 
@@ -118,14 +192,6 @@ https://supabase.com/dashboard/project/<PROJECT_REF>
 - [API URL and anon key](https://supabase.com/docs/guides/api/api-keys)
 - [Enabling Realtime on tables](https://supabase.com/docs/guides/realtime/postgres-changes)
 - [Row Level Security basics](https://supabase.com/docs/guides/auth/row-level-security)
-
-### 4. Run the development server
-
-```bash
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
 
 ### Useful database commands
 
