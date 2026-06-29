@@ -65,7 +65,7 @@ Inside the app, concerns are layered: `kanban.service.ts` handles all raw Supaba
 ### 1. Clone the repository
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/CodeCraftsman5314/kanban_board
 cd kanban-board
 ```
 
