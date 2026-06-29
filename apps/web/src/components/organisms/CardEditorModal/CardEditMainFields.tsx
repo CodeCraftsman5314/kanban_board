@@ -3,7 +3,7 @@
 import type { ChangeEvent, KeyboardEvent, ReactElement } from "react";
 
 import { LABELS } from "@/constants";
-import { Button } from "@/components/atoms";
+import { Button, Input } from "@/components/atoms";
 import { FormField } from "@/components/molecules";
 import {
   ADD_SUBTASK_LABEL,
@@ -68,13 +68,15 @@ function CardEditMainFields({
 
       <div>
         <div className="flex flex-wrap items-center gap-0.5 rounded-t-lg border border-b-0 border-gray-200 bg-gray-50 px-2 py-2 dark:border-gray-700 dark:bg-gray-950">
-          <button
+          <Button
             type="button"
+            variant="unstyled"
+            size="unstyled"
             className="flex cursor-pointer items-center gap-0.5 whitespace-nowrap rounded px-1.5 py-0.5 text-sm text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
           >
             {DESCRIPTION_TOOLBAR_NORMAL}
             <i className="ti ti-chevron-down ml-0.5 text-xs text-gray-400 dark:text-gray-500" />
-          </button>
+          </Button>
           <span className="mx-1 h-4 w-px shrink-0 bg-gray-200 dark:bg-gray-700" />
           <i className="ti ti-bold cursor-pointer rounded p-1 text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100" />
           <i className="ti ti-italic cursor-pointer rounded p-1 text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100" />
@@ -127,12 +129,13 @@ function CardEditMainFields({
         <p className="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">{SUBTASKS_LABEL}</p>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <input
+            <Input
               type="text"
               value={subtaskDraft}
               onChange={onSubtaskDraftChange}
               onKeyDown={onSubtaskKeyDown}
               placeholder={SUBTASK_INPUT_PLACEHOLDER}
+              variant="unstyled"
               className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-200 dark:placeholder:text-gray-600"
             />
             <Button size="sm" variant="secondary" onClick={onAddSubtask}>
@@ -152,14 +155,16 @@ function CardEditMainFields({
                   <span className="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-200">
                     {subtask}
                   </span>
-                  <button
+                  <Button
                     type="button"
                     aria-label={REMOVE_SUBTASK_LABEL}
                     onClick={() => onRemoveSubtask(index)}
+                    variant="unstyled"
+                    size="unstyled"
                     className="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-gray-400 hover:bg-red-50 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 dark:hover:bg-red-500/10 dark:hover:text-red-300"
                   >
                     <i className="ti ti-x text-xs" />
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>

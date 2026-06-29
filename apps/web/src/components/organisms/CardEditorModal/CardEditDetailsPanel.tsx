@@ -5,6 +5,7 @@ import { clsx } from "clsx";
 
 import type { Column, Priority } from "@/types";
 import { PRIORITY_LABELS } from "@/constants";
+import { Button, Input } from "@/components/atoms";
 import {
   EMPTY_OPTION_LABEL,
   PRIORITY_DROPDOWN_LABEL,
@@ -72,11 +73,13 @@ function CardEditDetailsPanel({
           {RIGHT_PANEL_LABELS.STATUS}
         </span>
         <div className="relative">
-          <button
+          <Button
             type="button"
             aria-label={STATUS_DROPDOWN_LABEL}
             aria-expanded={openDropdown === "status"}
             onClick={onStatusToggle}
+            variant="unstyled"
+            size="unstyled"
             className="flex w-full cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
           >
             <span className="flex min-w-0 items-center gap-2">
@@ -84,27 +87,29 @@ function CardEditDetailsPanel({
               <span className="truncate">{selectedColumnTitle}</span>
             </span>
             <i className="ti ti-chevron-down shrink-0 text-xs text-gray-400 dark:text-gray-500" />
-          </button>
+          </Button>
           {openDropdown === "status" && (
             <div className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-950">
               {columns.length === 0 ? (
                 <div className="px-3 py-2 text-sm text-gray-400 dark:text-gray-500">{EMPTY_OPTION_LABEL}</div>
               ) : (
                 columns.map((column) => (
-                  <button
+                  <Button
                     key={column.id}
                     type="button"
                     onClick={() => onStatusSelect(column.id)}
+                    variant="unstyled"
+                    size="unstyled"
                     className={clsx(
                       "flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800",
                       column.id === selectedColumnId
                         ? "text-blue-600 dark:text-blue-300"
                         : "text-gray-700 dark:text-gray-200"
                     )}
-                  >
-                    <i className="ti ti-circle-dot shrink-0 text-sm text-blue-500" />
-                    <span className="truncate">{column.title}</span>
-                  </button>
+                    >
+                      <i className="ti ti-circle-dot shrink-0 text-sm text-blue-500" />
+                      <span className="truncate">{column.title}</span>
+                    </Button>
                 ))
               )}
             </div>
@@ -130,21 +135,24 @@ function CardEditDetailsPanel({
           <div className={labelControlClasses}>
             <div className="flex min-w-0 flex-1 items-center gap-2">
               <i className="ti ti-tag shrink-0 text-sm text-gray-400 dark:text-gray-500" />
-              <input
+              <Input
                 type="text"
                 value={label}
                 onChange={onLabelChange}
                 onBlur={onLabelBlur}
                 autoFocus
+                variant="unstyled"
                 className="w-full min-w-0 flex-1 border-0 bg-transparent text-sm text-gray-700 focus:outline-none dark:text-gray-200"
               />
             </div>
           </div>
         ) : (
-          <button
+          <Button
             type="button"
-            disabled={!isEditable}
+            isDisabled={!isEditable}
             onClick={onLabelClick}
+            variant="unstyled"
+            size="unstyled"
             className={clsx(
               labelControlClasses,
               "w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
@@ -158,7 +166,7 @@ function CardEditDetailsPanel({
               </span>
             </div>
             {isEditable && <i className="ti ti-pencil shrink-0 text-xs text-gray-400 dark:text-gray-500" />}
-          </button>
+          </Button>
         )}
       </div>
 
@@ -167,11 +175,13 @@ function CardEditDetailsPanel({
           {RIGHT_PANEL_LABELS.PRIORITY}
         </span>
         <div className="relative">
-          <button
+          <Button
             type="button"
             aria-label={PRIORITY_DROPDOWN_LABEL}
             aria-expanded={openDropdown === "priority"}
             onClick={onPriorityToggle}
+            variant="unstyled"
+            size="unstyled"
             className="flex w-full cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
           >
             <span className="flex min-w-0 items-center gap-2">
@@ -179,14 +189,16 @@ function CardEditDetailsPanel({
               <span className="truncate">{selectedPriorityLabel}</span>
             </span>
             <i className="ti ti-chevron-down shrink-0 text-xs text-gray-400 dark:text-gray-500" />
-          </button>
+          </Button>
           {openDropdown === "priority" && (
             <div className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-950">
               {PRIORITY_OPTIONS.map((option) => (
-                <button
+                <Button
                   key={option.value}
                   type="button"
                   onClick={() => onPrioritySelect(option.value)}
+                  variant="unstyled"
+                  size="unstyled"
                   className={clsx(
                     "flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800",
                     option.value === priority
@@ -196,7 +208,7 @@ function CardEditDetailsPanel({
                 >
                   <i className={clsx("ti shrink-0 text-sm", getPriorityIconClass(option.value))} />
                   <span>{option.label}</span>
-                </button>
+                </Button>
               ))}
             </div>
           )}
@@ -210,10 +222,11 @@ function CardEditDetailsPanel({
         <div className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 dark:border-gray-700">
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <i className="ti ti-calendar shrink-0 text-sm text-gray-400 dark:text-gray-500" />
-            <input
+            <Input
               type="date"
               value={dueDate ?? ""}
               onChange={onDueDateChange}
+              variant="unstyled"
               className="w-full min-w-0 flex-1 cursor-pointer border-0 bg-transparent text-sm text-gray-700 focus:outline-none dark:text-gray-200"
             />
           </div>

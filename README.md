@@ -111,6 +111,14 @@ https://supabase.com/dashboard/project/<PROJECT_REF>
 
 `pnpm db:push` applies the SQL migrations in `supabase/migrations` to the linked project. The initial migration creates the Kanban tables, constraints, RLS policies, Realtime publication entries, and default columns.
 
+#### Useful Supabase Docs
+
+- [Supabase docs](https://supabase.com/docs)
+- [Creating a new project](https://supabase.com/docs/guides/getting-started)
+- [API URL and anon key](https://supabase.com/docs/guides/api/api-keys)
+- [Enabling Realtime on tables](https://supabase.com/docs/guides/realtime/postgres-changes)
+- [Row Level Security basics](https://supabase.com/docs/guides/auth/row-level-security)
+
 ### 4. Run the development server
 
 ```bash

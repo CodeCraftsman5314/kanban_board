@@ -4,6 +4,7 @@ import type { ReactElement } from "react";
 import { clsx } from "clsx";
 
 import type { Priority } from "@/types";
+import { Button } from "@/components/atoms";
 import { DueDateBadge, LabelBadge, PriorityBadge } from "@/components/molecules";
 import { RIGHT_PANEL_LABELS } from "./constants";
 import { formatDisplayDate, getPriorityIconClass } from "./helpers";
@@ -38,14 +39,16 @@ function CardViewDetailsPanel({
           <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">
             {selectedColumnTitle}
           </span>
-          <button
+          <Button
             type="button"
             onClick={onSwitchToEdit}
             aria-label={RIGHT_PANEL_LABELS.STATUS}
+            variant="unstyled"
+            size="unstyled"
             className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300"
           >
             <i className="ti ti-pencil text-sm" />
-          </button>
+          </Button>
         </div>
         <div className="flex items-center gap-3 py-4">
           <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -55,14 +58,16 @@ function CardViewDetailsPanel({
           <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">
             {RIGHT_PANEL_LABELS.UNASSIGNED}
           </span>
-          <button
+          <Button
             type="button"
             onClick={onSwitchToEdit}
             aria-label={RIGHT_PANEL_LABELS.ASSIGNEE}
+            variant="unstyled"
+            size="unstyled"
             className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300"
           >
             <i className="ti ti-plus text-lg" />
-          </button>
+          </Button>
         </div>
         <div className="flex items-center gap-3 py-4">
           <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -72,14 +77,16 @@ function CardViewDetailsPanel({
           <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">
             {label ? <LabelBadge label={label} /> : RIGHT_PANEL_LABELS.NONE}
           </span>
-          <button
+          <Button
             type="button"
             onClick={onSwitchToEdit}
             aria-label={RIGHT_PANEL_LABELS.LABELS}
+            variant="unstyled"
+            size="unstyled"
             className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300"
           >
             <i className="ti ti-plus text-lg" />
-          </button>
+          </Button>
         </div>
         <div className="flex items-center gap-3 py-4">
           <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -89,14 +96,16 @@ function CardViewDetailsPanel({
           <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">
             <PriorityBadge priority={priority} />
           </span>
-          <button
+          <Button
             type="button"
             onClick={onSwitchToEdit}
             aria-label={RIGHT_PANEL_LABELS.PRIORITY}
+            variant="unstyled"
+            size="unstyled"
             className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300"
           >
             <i className="ti ti-chevron-down text-sm" />
-          </button>
+          </Button>
         </div>
         <div className="flex items-center gap-3 py-4">
           <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -107,14 +116,16 @@ function CardViewDetailsPanel({
             <DueDateBadge dueDate={dueDate} />
             {!dueDate && formatDisplayDate(dueDate)}
           </span>
-          <button
+          <Button
             type="button"
             onClick={onSwitchToEdit}
             aria-label={RIGHT_PANEL_LABELS.DUE_DATE}
+            variant="unstyled"
+            size="unstyled"
             className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300"
           >
             <i className="ti ti-plus text-lg" />
-          </button>
+          </Button>
         </div>
         <div className="flex items-center gap-3 py-4">
           <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -124,14 +135,16 @@ function CardViewDetailsPanel({
           <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">
             {RIGHT_PANEL_LABELS.NO_START_DATE}
           </span>
-          <button
+          <Button
             type="button"
             onClick={onSwitchToEdit}
             aria-label={RIGHT_PANEL_LABELS.START_DATE}
+            variant="unstyled"
+            size="unstyled"
             className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300"
           >
             <i className="ti ti-plus text-lg" />
-          </button>
+          </Button>
         </div>
         <div className="flex items-center gap-3 py-4">
           <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -141,14 +154,16 @@ function CardViewDetailsPanel({
           <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">
             {RIGHT_PANEL_LABELS.NONE}
           </span>
-          <button
+          <Button
             type="button"
             onClick={onSwitchToEdit}
             aria-label={RIGHT_PANEL_LABELS.PARENT_CARD}
+            variant="unstyled"
+            size="unstyled"
             className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300"
           >
             <i className="ti ti-plus text-lg" />
-          </button>
+          </Button>
         </div>
         <div className="flex items-center gap-3 py-4">
           <span className="flex w-32 shrink-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -158,25 +173,29 @@ function CardViewDetailsPanel({
           <span className="min-w-0 flex-1 truncate text-sm text-gray-600 dark:text-gray-300">
             {RIGHT_PANEL_LABELS.NONE}
           </span>
-          <button
+          <Button
             type="button"
             onClick={onSwitchToEdit}
             aria-label={RIGHT_PANEL_LABELS.TEMPLATE}
+            variant="unstyled"
+            size="unstyled"
             className="cursor-pointer text-gray-400 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-blue-300"
           >
             <i className="ti ti-plus text-lg" />
-          </button>
+          </Button>
         </div>
       </div>
       <div className="pt-5">
-        <button
+        <Button
           type="button"
-          disabled
+          isDisabled
+          variant="unstyled"
+          size="unstyled"
           className="flex cursor-not-allowed items-center gap-1 text-sm font-medium text-gray-700 opacity-70 dark:text-gray-300"
         >
           {RIGHT_PANEL_LABELS.MORE_OPTIONS}
           <i className="ti ti-chevron-down text-xs" />
-        </button>
+        </Button>
         <p className="mt-2 text-xs text-gray-500 dark:text-gray-500">{RIGHT_PANEL_LABELS.MORE_OPTIONS_SUB}</p>
       </div>
     </aside>

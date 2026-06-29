@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 
 import type { ThemeMode } from "@/types";
+import { Button } from "@/components/atoms";
 
 interface ThemeToggleProps {
   className?: string;
@@ -43,14 +44,16 @@ function ThemeToggle({ className }: ThemeToggleProps): ReactElement {
   };
 
   return (
-    <button
+    <Button
       type="button"
       onClick={handleToggle}
       aria-label={TOGGLE_ARIA_LABEL}
+      variant="unstyled"
+      size="unstyled"
       className={clsx(BUTTON_CLASSES, className)}
     >
       <i className={clsx("ti text-sm", theme === "dark" ? "ti-sun" : "ti-moon")} />
-    </button>
+    </Button>
   );
 }
 

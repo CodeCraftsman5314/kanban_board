@@ -6,6 +6,7 @@ import { clsx } from "clsx";
 
 import type { Card } from "@/types";
 import { LABELS, PRIORITY_LABELS } from "@/constants";
+import { Button } from "@/components/atoms";
 
 interface KanbanCardProps {
   card: Card;
@@ -91,15 +92,17 @@ function KanbanCard({
             {labelText}
           </span>
         </div>
-        <button
+        <Button
           type="button"
           onClick={handleDelete}
           aria-label={LABELS.DELETE}
+          variant="unstyled"
+          size="unstyled"
           className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded text-gray-400 transition-all duration-150 hover:bg-red-50 hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-slate-500 dark:hover:bg-red-500/10 dark:hover:text-red-300"
         >
           <i className="ti ti-dots text-lg group-hover:hidden" />
           <i className="ti ti-trash hidden text-sm group-hover:inline-block" />
-        </button>
+        </Button>
       </div>
       <p className="mt-4 line-clamp-2 text-lg font-semibold leading-snug text-gray-900 dark:text-slate-50">{card.title}</p>
       <p className="mt-2 line-clamp-2 text-sm leading-5 text-gray-500 dark:text-slate-400">

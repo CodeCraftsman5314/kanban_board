@@ -3,7 +3,7 @@
 import type { ChangeEvent, ReactElement } from "react";
 
 import { LABELS } from "@/constants";
-import { Button } from "@/components/atoms";
+import { Button, Input } from "@/components/atoms";
 import { BTN_CREATE_CARD, BTN_SAVE_CHANGES, CREATE_ANOTHER_LABEL } from "./constants";
 
 interface CardEditActionsProps {
@@ -29,12 +29,13 @@ function CardEditActions({
     return (
       <div className="mt-4 flex flex-col items-start justify-between gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:gap-0 dark:border-gray-800">
         <label className="flex cursor-pointer items-center gap-2">
-          <input
-            type="checkbox"
-            checked={createAnother}
-            onChange={onCreateAnotherChange}
-            className="h-4 w-4 rounded border-gray-300 accent-blue-600"
-          />
+            <Input
+              type="checkbox"
+              checked={createAnother}
+              onChange={onCreateAnotherChange}
+              variant="unstyled"
+              className="h-4 w-4 rounded border-gray-300 accent-blue-600"
+            />
           <span className="text-sm text-gray-600 dark:text-gray-300">{CREATE_ANOTHER_LABEL}</span>
         </label>
         <div className="flex items-center gap-2 self-end sm:self-auto">

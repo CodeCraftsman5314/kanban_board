@@ -6,6 +6,7 @@ import { clsx } from "clsx";
 
 import type { Card, Column } from "@/types";
 import { LABELS } from "@/constants";
+import { Button } from "@/components/atoms";
 import CreatingCard from "@/components/organisms/CreatingCard";
 import KanbanCard from "@/components/organisms/KanbanCard";
 
@@ -104,14 +105,16 @@ function KanbanColumn({
           <span className="text-base font-semibold text-gray-800 dark:text-slate-100">{column.title}</span>
           <span className="text-sm text-gray-500 font-normal dark:text-slate-400">{cards.length + (isCreating ? 1 : 0)}</span>
         </div>
-        <button
+        <Button
           type="button"
           aria-label={COLUMN_MENU_LABEL}
-          disabled
+          isDisabled
+          variant="unstyled"
+          size="unstyled"
           className="flex h-7 w-7 cursor-not-allowed items-center justify-center rounded text-gray-400 opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-slate-500"
         >
           <i className="ti ti-dots" />
-        </button>
+        </Button>
       </div>
       <div
         className={clsx(
@@ -140,9 +143,11 @@ function KanbanColumn({
         )}
       </div>
       <div className="px-3 pb-3 pt-1">
-        <button
+        <Button
           type="button"
           onClick={handleAddCard}
+          variant="unstyled"
+          size="unstyled"
           className={clsx(
             "flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
             COLUMN_BUTTON_COLORS[accentIndex]
@@ -150,7 +155,7 @@ function KanbanColumn({
         >
           <i className="ti ti-plus text-base" />
           {LABELS.ADD_CARD}
-        </button>
+        </Button>
       </div>
     </div>
   );

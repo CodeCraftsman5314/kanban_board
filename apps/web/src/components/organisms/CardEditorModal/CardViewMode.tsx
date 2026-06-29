@@ -78,14 +78,16 @@ function CardViewMode({
             <span className="-ml-5 flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-sm font-semibold text-white ring-2 ring-white dark:ring-gray-900">
               {ASSIGNEE_INITIALS[1]}
             </span>
-            <button
+            <Button
               type="button"
               onClick={onSwitchToEdit}
+              variant="unstyled"
+              size="unstyled"
               className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-dashed border-gray-300 text-gray-500 hover:border-blue-300 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-gray-700 dark:text-gray-400 dark:hover:border-blue-500 dark:hover:text-blue-300"
               aria-label={RIGHT_PANEL_LABELS.ASSIGNEE}
             >
               <i className="ti ti-plus text-base" />
-            </button>
+            </Button>
             <Button variant="secondary" size="sm" onClick={onSwitchToEdit}>
               <i className="ti ti-checkbox mr-1" />
               {ADD_SUBTASK_LABEL}
@@ -105,22 +107,26 @@ function CardViewMode({
             <i className="ti ti-pencil mr-1" />
             {BTN_EDIT}
           </Button>
-          <button
+          <Button
             type="button"
             aria-label={MAXIMIZE_LABEL}
-            disabled
+            isDisabled
+            variant="unstyled"
+            size="unstyled"
             className="flex h-9 w-9 cursor-not-allowed items-center justify-center rounded-lg bg-gray-50 text-gray-400 opacity-70 dark:bg-gray-800 dark:text-gray-500"
           >
             <i className="ti ti-arrows-maximize text-sm" />
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             aria-label={CLOSE_MODAL_LABEL}
             onClick={onClose}
+            variant="unstyled"
+            size="unstyled"
             className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-200"
           >
             <i className="ti ti-x text-lg" />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -140,10 +146,12 @@ function CardViewMode({
       </div>
 
       <div className="flex shrink-0 items-center justify-between border-t border-gray-100 pt-6 dark:border-gray-800">
-        <button
+        <Button
           type="button"
           onClick={onDelete}
-          disabled={!onDelete}
+          isDisabled={!onDelete}
+          variant="unstyled"
+          size="unstyled"
           className={clsx(
             "flex items-center gap-1.5 rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-500 transition-colors duration-150 dark:bg-red-500/10 dark:text-red-300",
             onDelete
@@ -153,7 +161,7 @@ function CardViewMode({
         >
           <i className="ti ti-trash text-sm" />
           {DELETE_CARD_LABEL}
-        </button>
+        </Button>
         <Button variant="secondary" onClick={onClose}>
           {BTN_CLOSE}
         </Button>

@@ -4,6 +4,7 @@ import type { ReactElement } from "react";
 import { clsx } from "clsx";
 
 import type { Column, ConnectionStatus } from "@/types";
+import { Button, Input } from "@/components/atoms";
 import { ConnectionBadge } from "@/components/molecules";
 import ThemeToggle from "@/components/organisms/ThemeToggle";
 import {
@@ -73,22 +74,25 @@ function BoardNavbar({ columns, connectionStatus, userCount, searchQuery, onSear
       <div className="flex h-10 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-3 dark:border-slate-800 dark:bg-slate-900 md:px-4">
         <div className="flex items-center gap-2">
           <i className="ti ti-search text-sm text-gray-400 dark:text-gray-500" />
-          <input
+          <Input
             type="text"
             value={searchQuery}
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder={SEARCH_PLACEHOLDER}
+            variant="unstyled"
             className="w-48 bg-transparent text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none dark:text-gray-300 dark:placeholder:text-gray-500"
           />
           {searchQuery && (
-            <button
+            <Button
               type="button"
               onClick={onSearchClear}
               aria-label={SEARCH_CLEAR_LABEL}
+              variant="unstyled"
+              size="unstyled"
               className="cursor-pointer text-gray-400 transition-colors hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
             >
               <i className="ti ti-x text-xs" />
-            </button>
+            </Button>
           )}
           {searchQuery && totalMatches !== null && (
             <span className="whitespace-nowrap text-xs text-gray-400 dark:text-gray-500">
@@ -97,9 +101,9 @@ function BoardNavbar({ columns, connectionStatus, userCount, searchQuery, onSear
           )}
         </div>
         <div className="hidden items-center gap-2 md:flex">
-          <button type="button" className="cursor-pointer rounded px-2 py-1 text-sm text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100">{GROUP_LABEL}</button>
-          <button type="button" className="cursor-pointer rounded px-2 py-1 text-sm text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100">{SORT_LABEL}</button>
-          <button type="button" onClick={onAddCard} disabled={columns.length === 0} className="cursor-pointer rounded px-2 py-1 text-sm text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100">{ADD_CARD_LABEL}</button>
+          <Button type="button" variant="unstyled" size="unstyled" className="cursor-pointer rounded px-2 py-1 text-sm text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100">{GROUP_LABEL}</Button>
+          <Button type="button" variant="unstyled" size="unstyled" className="cursor-pointer rounded px-2 py-1 text-sm text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100">{SORT_LABEL}</Button>
+          <Button type="button" onClick={onAddCard} isDisabled={columns.length === 0} variant="unstyled" size="unstyled" className="cursor-pointer rounded px-2 py-1 text-sm text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100">{ADD_CARD_LABEL}</Button>
         </div>
       </div>
     </>

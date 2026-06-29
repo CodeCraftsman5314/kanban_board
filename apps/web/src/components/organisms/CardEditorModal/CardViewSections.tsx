@@ -39,14 +39,16 @@ function CardViewSections({
             <i className="ti ti-notes text-gray-600 dark:text-gray-400" />
             {LABELS.DESCRIPTION}
           </h3>
-          <button
+          <Button
             type="button"
             onClick={onSwitchToEdit}
+            variant="unstyled"
+            size="unstyled"
             className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-sm text-gray-400 hover:bg-gray-50 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-200"
           >
             <i className="ti ti-pencil text-sm" />
             {BTN_EDIT}
-          </button>
+          </Button>
         </div>
         <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-gray-500 dark:text-gray-400">
           {description || VIEW_DESCRIPTION_EMPTY_PLACEHOLDER}

@@ -3,6 +3,7 @@
 import type { ChangeEvent, KeyboardEvent, ReactElement } from "react";
 
 import type { Column, Priority } from "@/types";
+import { Button } from "@/components/atoms";
 import {
   CLOSE_MODAL_LABEL,
   MAXIMIZE_LABEL,
@@ -98,30 +99,36 @@ function CardEditForm({
       <div className="mb-4 flex items-center justify-between border-b border-gray-100 pb-4 dark:border-gray-800">
         <span className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{modalTitle}</span>
         <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
             aria-label={MINIMIZE_LABEL}
-            disabled
+            isDisabled
+            variant="unstyled"
+            size="unstyled"
             className="cursor-not-allowed text-sm text-gray-400 opacity-60 dark:text-gray-600"
           >
             <i className="ti ti-minus" />
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             aria-label={MAXIMIZE_LABEL}
-            disabled
+            isDisabled
+            variant="unstyled"
+            size="unstyled"
             className="cursor-not-allowed text-sm text-gray-400 opacity-60 dark:text-gray-600"
           >
             <i className="ti ti-arrows-maximize" />
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             aria-label={CLOSE_MODAL_LABEL}
             onClick={onClose}
+            variant="unstyled"
+            size="unstyled"
             className="cursor-pointer text-sm text-gray-400 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-500 dark:hover:text-gray-200"
           >
             <i className="ti ti-x" />
-          </button>
+          </Button>
         </div>
       </div>
 
