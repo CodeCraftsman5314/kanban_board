@@ -30,13 +30,7 @@ const SIZE_CLASSES = {
   lg: "text-base px-6 py-3 rounded-lg",
 } as const;
 
-const BASE_CLASSES = clsx(
-  "inline-flex items-center justify-center gap-2 font-medium",
-  "transition-all duration-200",
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900",
-  "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
-  "cursor-pointer"
-);
+const BASE_CLASSES = "inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none cursor-pointer";
 
 function Button({
   children,

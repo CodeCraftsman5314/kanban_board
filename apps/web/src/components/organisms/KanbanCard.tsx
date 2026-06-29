@@ -58,7 +58,7 @@ function KanbanCard({ card, onCardClick, onDelete }: KanbanCardProps): ReactElem
       onDragEnd={handleDragEnd}
       onClick={handleClick}
       className={clsx(
-        "group relative z-10 min-h-40 select-none overflow-hidden rounded-xl border border-gray-200 bg-white p-4 pl-7 shadow-md shadow-gray-200/70 ring-1 ring-white transition-all duration-150 transition-opacity duration-200 hover:z-20 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100 dark:border-slate-700 dark:bg-slate-900 dark:shadow-lg dark:shadow-black/25 dark:ring-white/5 dark:hover:border-blue-500/40 dark:hover:bg-slate-800 dark:hover:shadow-black/40",
+        "group relative z-10 min-h-40 select-none overflow-hidden rounded-xl border border-gray-200 bg-white p-4 pl-7 shadow-md shadow-gray-200/70 ring-1 ring-white transition-all duration-150 hover:z-20 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100 dark:border-slate-700 dark:bg-slate-900 dark:shadow-lg dark:shadow-black/25 dark:ring-white/5 dark:hover:border-blue-500/40 dark:hover:bg-slate-800 dark:hover:shadow-black/40",
         isDragging ? "cursor-grabbing opacity-50" : "cursor-grab"
       )}
     >

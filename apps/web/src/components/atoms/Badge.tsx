@@ -8,12 +8,7 @@ interface BadgeProps {
   className?: string;
 }
 
-const BASE_CLASSES = clsx(
-  "inline-flex items-center justify-center",
-  "h-5 min-w-5 px-1.5",
-  "text-xs font-semibold",
-  "bg-gray-200 text-gray-700 rounded-full dark:bg-gray-800 dark:text-gray-200"
-);
+const BASE_CLASSES = "inline-flex items-center justify-center h-5 min-w-5 px-1.5 text-xs font-semibold bg-gray-200 text-gray-700 rounded-full dark:bg-gray-800 dark:text-gray-200";
 
 function Badge({ count, className }: BadgeProps): ReactElement {
   return <span className={clsx(BASE_CLASSES, className)}>{count}</span>;

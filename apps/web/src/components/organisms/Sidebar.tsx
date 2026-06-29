@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { KeyboardEvent } from "react";
-import type { ReactElement } from "react";
+import type { KeyboardEvent, ReactElement } from "react";
 import { clsx } from "clsx";
 
 interface SidebarNavItem {
@@ -20,6 +19,7 @@ const NAV_ITEMS: SidebarNavItem[] = [
   { iconClass: "ti-users", label: "Members", isActive: false },
 ] as const;
 
+const LOGO_LABEL = "Kanban";
 const SIDEBAR_TOGGLE_LABEL = "Toggle sidebar";
 const SETTINGS_ITEM: SidebarNavItem = { iconClass: "ti-settings", label: "Settings", isActive: false };
 
@@ -61,7 +61,7 @@ function Sidebar(): ReactElement {
             isExpanded ? "opacity-100" : "opacity-0"
           )}
         >
-          Kanban
+          {LOGO_LABEL}
         </span>
       </div>
 

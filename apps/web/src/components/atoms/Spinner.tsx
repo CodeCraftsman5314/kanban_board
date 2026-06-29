@@ -33,12 +33,12 @@ function Spinner({ size = "md", className }: SpinnerProps): ReactElement {
         r="10"
         stroke="currentColor"
         strokeWidth={STROKE_WIDTH}
-        className={clsx("opacity-25")}
+        className="opacity-25"
       />
       <path
         fill="currentColor"
         d={SPINNER_PATH}
-        className={clsx("opacity-75")}
+        className="opacity-75"
       />
     </svg>
   );

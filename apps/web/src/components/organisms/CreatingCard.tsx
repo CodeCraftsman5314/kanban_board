@@ -2,6 +2,8 @@
 
 import type { ReactElement } from "react";
 
+const CREATING_CARD_LABEL = "Creating card…";
+
 function CreatingCard(): ReactElement {
   return (
     <div className="animate-fade-in relative min-h-40 overflow-hidden rounded-xl border-2 border-dashed border-blue-300 bg-white p-4 pl-7 dark:border-blue-500/40 dark:bg-slate-900">
@@ -19,7 +21,7 @@ function CreatingCard(): ReactElement {
           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
           <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" className="opacity-75" />
         </svg>
-        <span className="text-sm font-medium text-blue-500 dark:text-blue-400">Creating card…</span>
+        <span className="text-sm font-medium text-blue-500 dark:text-blue-400">{CREATING_CARD_LABEL}</span>
       </div>
 
       {/* Skeleton title */}

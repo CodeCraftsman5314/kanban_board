@@ -12,6 +12,7 @@ interface ThemeToggleProps {
 
 const BUTTON_CLASSES = "w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800 transition-colors duration-150 cursor-pointer";
 const THEME_STORAGE_KEY = "kanban-theme";
+const TOGGLE_ARIA_LABEL = "Toggle theme";
 
 const applyTheme = (theme: ThemeMode): void => {
   document.documentElement.classList.toggle("dark", theme === "dark");
@@ -45,7 +46,7 @@ function ThemeToggle({ className }: ThemeToggleProps): ReactElement {
     <button
       type="button"
       onClick={handleToggle}
-      aria-label="Toggle theme"
+      aria-label={TOGGLE_ARIA_LABEL}
       className={clsx(BUTTON_CLASSES, className)}
     >
       <i className={clsx("ti text-sm", theme === "dark" ? "ti-sun" : "ti-moon")} />

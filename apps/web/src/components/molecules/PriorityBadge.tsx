@@ -19,7 +19,7 @@ const PRIORITY_ICONS = {
 } as const;
 
 const TABLER_BASE_CLASS = "ti" as const;
-const CONTAINER_CLASSES = clsx("inline-flex items-center gap-1 text-xs font-medium");
+const CONTAINER_CLASSES = "inline-flex items-center gap-1 text-xs font-medium";
 
 function PriorityBadge({ priority, className }: PriorityBadgeProps): ReactElement {
   return (

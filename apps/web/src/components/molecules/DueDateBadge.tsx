@@ -23,7 +23,7 @@ const DATE_COLOR_CLASSES = {
   future: "text-gray-500",
 } as const;
 
-const CONTAINER_BASE_CLASSES = clsx("inline-flex items-center gap-1 text-xs");
+const CONTAINER_BASE_CLASSES = "inline-flex items-center gap-1 text-xs";
 const CALENDAR_ICON_CLASS = "ti ti-calendar" as const;
 
 const getDateStatus = (dateStr: string): DateStatus => {
@@ -48,7 +48,7 @@ function DueDateBadge({ dueDate, className }: DueDateBadgeProps): ReactElement |
 
   return (
     <span className={clsx(CONTAINER_BASE_CLASSES, DATE_COLOR_CLASSES[status], className)}>
-      <i className={clsx(CALENDAR_ICON_CLASS)} />
+      <i className={CALENDAR_ICON_CLASS} />
       {formatDate(dueDate)}
     </span>
   );

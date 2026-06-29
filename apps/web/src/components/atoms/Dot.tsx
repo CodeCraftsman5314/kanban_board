@@ -16,7 +16,7 @@ const STATUS_CLASSES = {
   disconnected: "bg-red-500",
 } as const;
 
-const BASE_CLASSES = clsx("rounded-full w-2 h-2 inline-block flex-shrink-0");
+const BASE_CLASSES = "rounded-full w-2 h-2 inline-block flex-shrink-0";
 
 function Dot({ status, className }: DotProps): ReactElement {
   return <span className={clsx(BASE_CLASSES, STATUS_CLASSES[status], className)} />;
