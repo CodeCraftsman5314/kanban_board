@@ -31,6 +31,13 @@ const getNextOrder = (cards: Card[]): number =>
   cards.reduce((highestOrder, card) => Math.max(highestOrder, card.order), 0) +
   FIRST_ORDER;
 
+const upsertCardById = (cards: Card[], nextCard: Card): Card[] => {
+  const existingIndex = cards.findIndex((card) => card.id === nextCard.id);
+  if (existingIndex === -1) return [...cards, nextCard];
+
+  return cards.map((card, index) => (index === existingIndex ? nextCard : card));
+};
+
 const wait = (durationMs: number): Promise<void> =>
   new Promise((resolve) => {
     window.setTimeout(resolve, durationMs);
@@ -99,7 +106,7 @@ function useBoardCards({
         ...currentState,
         cards: {
           ...currentState.cards,
-          [columnId]: [...(currentState.cards[columnId] ?? []), createdCard],
+          [columnId]: upsertCardById(currentState.cards[columnId] ?? [], createdCard),
         },
       }));
       markCardForAnimation(createdCard.id);

@@ -54,7 +54,7 @@ function Button({
       disabled={isDisabled || isLoading}
       aria-label={ariaLabel}
       aria-busy={isLoading}
-      className={clsx(BASE_CLASSES, VARIANT_CLASSES[variant], SIZE_CLASSES[size], className)}
+      className={clsx(baseClasses, VARIANT_CLASSES[variant], SIZE_CLASSES[size], className)}
     >
       {isLoading && <Spinner size="sm" />}
       {children}
