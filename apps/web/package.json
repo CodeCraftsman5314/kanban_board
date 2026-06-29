@@ -1,6 +1,9 @@
 {
   "name": "@repo/web",
   "version": "0.0.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",
