@@ -9,7 +9,9 @@
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
-    "typescript": "^5.8.3"
+    "eslint": "^9.29.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.0"
   },
   "scripts": {
     "type-check": "tsc --noEmit",

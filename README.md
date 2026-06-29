@@ -69,8 +69,8 @@ pnpm dev
 
 ### Prerequisites
 
-- Node.js 18+
-- pnpm (`npm install -g pnpm`)
+- Node.js 22.13+
+- pnpm 11 (`corepack enable && corepack prepare pnpm@11.9.0 --activate`)
 - Supabase CLI (`npm install -g supabase`)
 - A Supabase project (free tier works)
 
